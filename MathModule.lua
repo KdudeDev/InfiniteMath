@@ -209,8 +209,6 @@ function Number:ScientificNotation()
 	return numbers[1]:sub(0, 4).."e+"..numbers[2]
 end
 
-
-
 function Number:GetSuffix(abbreviation)
 	local numbers =  self.val:split(',')
 	local first, second = numbers[1], numbers[2]
