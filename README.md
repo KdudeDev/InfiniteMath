@@ -13,6 +13,8 @@ InfiniteMath uses strings instead of numbers in a clever way to get around the l
 
 There are suffixes up to 1e+12000, after that all numbers will display scientific notation. If you want to see all the suffixes, here's a google doc with them: https://docs.google.com/document/d/e/2PACX-1vTB2zhx8PCdu5HpV5kwqmNx8BV9RCv44qZaljlTb0Mm0nkzwMQ2cI6aupxrNktrlylsp-QnbES-XteP/pub
 
+If you have a list that goes higher than 1e+12000 (Trillinovenonagintanongentillion/TRNNA), by all means share it with me, I'd love to see it.
+
 # Explanation
 
 A normal number in Roblox looks like this:
