@@ -175,6 +175,10 @@ function Number.__le(a, b)
 	return second1 < second2 and first1 >= 0
 end
 
+function Number.__tostring(self)
+	return self:GetSuffix()
+end
+
 
 ---- Class methods -----
 function Number.new(val)
