@@ -11,6 +11,8 @@ Or for math geeks out there:
 This is normally perfectly fine for games, but sometimes you might want to go past that limit, even just a little bit. InfiniteMath allows you to have practically infinite numbers.
 InfiniteMath uses strings instead of numbers in a clever way to get around the limit.
 
+There are suffixes up to 1e+12000, after that all numbers will display scientific notation. If you want to see all the suffixes, here's a google doc with them: https://docs.google.com/document/d/e/2PACX-1vTB2zhx8PCdu5HpV5kwqmNx8BV9RCv44qZaljlTb0Mm0nkzwMQ2cI6aupxrNktrlylsp-QnbES-XteP/pub
+
 # Explanation
 
 A normal number in Roblox looks like this:
