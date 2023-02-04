@@ -25,7 +25,7 @@ Now if we were to convert that to InfiniteMath, it would look like:
 
 > "1, 0"
 
-To explain, we can construct a string out of number by taking the coefficient and the exponent, and splitting them up into a string.
+To explain, we can construct a string out of a number by taking the coefficient and the exponent, and splitting them up into a string.
 
 Lets say we want to use `1000` with the module, we take the coefficient (1) and the exponent, which the amount of zeros (3) and put them in a string:
 
@@ -43,7 +43,7 @@ And if we tried to display that as a number, it would return `1e+1.e+308`, aka 1
 
 # Constructing a number
 
-To start using InfiniteMath, first you want to construct a new number. To do so, we use IM.new(number) (We'll say IM is InfiniteMath from now on)
+To start using InfiniteMath, first you want to construct a new number. To do so, we use `IM.new(number)` (We'll say IM is InfiniteMath from now on)
 ```lua
 local Number = IM.new(1)
 ```
