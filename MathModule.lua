@@ -158,7 +158,7 @@ function Number.__pow(a, power)
 	
 	if power > 1 then
 		local orig = first
-		for i = 1, power do
+		for i = 1, power - 1 do
 			first *= orig
 		end
 		second *= power
