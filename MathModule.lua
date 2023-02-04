@@ -12,30 +12,7 @@ local function fixNumber(first, second)
 	first = tonumber(first)
 	second = tonumber(second)
 	
-	if first == 0 then
-		return first, 0
-	elseif second < 0 then
-		local sign = if first < 0 then -1 else 1
-		
-		local x = math.abs(first)
-
-		if second > -4 then
-			for i = 1, math.abs(second) do
-				x /= 10
-				second += 1
-			end
-		else
-			for i = 1, 4 do
-				x /= 10
-				second += 1
-			end
-		end
-
-		x *= sign
-
-		return x, 0
-		
-	elseif second == 0 and first < 1 then
+	if first == 0 or (second == 0 and first < 1) then
 		return first, 0
 	elseif second == 0 and first == 0 then
 		return 0,0
