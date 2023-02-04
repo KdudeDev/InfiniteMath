@@ -51,8 +51,6 @@ local function fixNumber(first, second)
 	end
 end
 
--- TODO: needs some work. not precise enough at lower numbers
--- example: 1000 and 1001 return the same thing
 local function convert(number)
 	-- get string representation
 	local numberStr = tostring(number)
@@ -69,27 +67,8 @@ local function convert(number)
 	elseif numberStr:match("nan") then
 		second = "nan"
 		first = "nan"
-	elseif second >= 2 then
-		local firstc = tonumber(numberStr:sub(1, 1))
-		local secondc = tonumber(numberStr:sub(2, 2))
-		local thirdc = tonumber(numberStr:sub(3, 3))
-
-		if secondc >= 0 and thirdc > 0 then
-			first = firstc.."."..secondc..""..thirdc
-		elseif secondc > 0 and thirdc == 0 then
-			first = firstc.."."..secondc
-		elseif secondc == 0 and thirdc == 0 then
-			first = firstc
-		end
-	elseif second == 1 then
-		local firstc = tostring(Number):sub(1, 1)
-		local secondc = tostring(Number):sub(2, 2)
-
-		if tonumber(secondc) > 0 then
-			first = tonumber(firstc.."."..secondc)
-		elseif tonumber(secondc) == 0 then
-			first = tonumber(firstc)
-		end
+	elseif second >= 1 then
+		first = numberStr:sub(1, 1).."."..numberStr:sub(2, THRESHOLD)
 	else
 		first = number
 	end
