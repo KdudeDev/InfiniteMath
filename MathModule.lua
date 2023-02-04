@@ -222,7 +222,7 @@ function Number:GetAbbSuffix()
 	local str = math.floor(first * 10)/10
 
 	if suffixIndex > 0 then
-		str ..= suffixes[suffixIndex] or "e+"..second
+		str ..= " " .. full_names[suffixIndex] or "e+"..second
 	end
 
 	return str
@@ -242,7 +242,7 @@ function Number:GetSuffix()
 	local str = math.floor(first * 10)/10
 
 	if suffixIndex > 0 then
-		str ..= " " .. full_names[suffixIndex] or "e+"..second
+		str ..= suffixes[suffixIndex] or "e+"..second
 	end
 
 	return str
