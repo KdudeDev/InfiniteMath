@@ -228,126 +228,21 @@ end
 function Number:GetSuffix()
 	local numbers =  self.val:split(',')
 	local first, second = numbers[1], numbers[2]
-
-	if second ~= 0 then
-		first, second = fixNumber(first, second)
-	end
-	first = tostring(first)
 	
-	local stringed = nil
-
-	if second == 0 then
-		if #first > 5 then
-			repeat
-				first = first:sub(0, -2)
-			until #first <= 5
-		end
-
-		local firsts = first:split(".")
-
-		if firsts[2] ~= nil then
-			stringed = firsts[1].."."..firsts[2]
-		else
-			stringed = first
-		end
-	elseif second == 1 or second == -1 then
-		local firsts = first:split(".")
-
-		if firsts[2] ~= nil then
-			local firstsub = firsts[2]:sub(0, 1)
-			stringed = firsts[1]..firstsub
-		else
-			stringed = first.."0"
-		end
-	elseif second == 2 or second == -2 then
-		local firsts = first:split(".")
-
-		if firsts[2] ~= nil then
-			local firstsub = firsts[2]:sub(0, 2)
-			local secondsub = string.sub(firsts[2], 2)
-			stringed = firsts[1]..firstsub
-			
-			if #secondsub == 0 then
-				stringed ..= "0"
-			end
-		else
-			stringed = first.."00"
-		end
-	else
-		if string.len(tostring(first)) > 5 then
-			repeat
-				first = tonumber(tostring(first):sub(0, -2))
-			until string.len(tostring(first)) <= 5
-		end
-
-		local chosen = suffixes[math.floor(second / 3)]
-
-		if chosen ~= nil then
-			local firsts = string.split(first, ".")
-
-			if firsts[2] ~= nil then
-				if string.len(firsts[2]) > 3 then
-					repeat
-						firsts[2] = tonumber(tostring(firsts[2]):sub(0, -2))
-					until string.len(firsts[2]) <= 3
-				end
-			end
-
-			if second / 3 == math.floor(second / 3) then
-				if firsts[2] ~= nil then
-					local firstsub = string.sub(firsts[2], 0, 3)
-					if string.len(firstsub) == 0 then
-						stringed = firsts[1]..chosen
-					else
-						stringed = firsts[1].."."..firstsub..chosen
-					end
-				else
-					stringed = first..""..chosen
-				end
-			elseif (second + 1) / 3 == math.floor((second + 1) / 3) then
-				if firsts[2] ~= nil then
-					local firstsub = string.sub(firsts[2], 0, 2)
-					local secondsub = string.sub(firsts[2], 2)
-					if string.len(secondsub) == 0 then
-						stringed = firsts[1]..firstsub.."0"..chosen
-					elseif string.len(secondsub) == 2 then
-						stringed = firsts[1]..firstsub.."."..secondsub..chosen
-					else
-						stringed = firsts[1]..firstsub.."."..secondsub..chosen
-					end
-				else
-					if string.len(firsts[1]) == 1 then
-						stringed = first.."00"..chosen
-					else
-						stringed = first.."0"..chosen
-					end
-				end
-			elseif (second + 2) / 3 == math.floor((second + 2) / 3) then
-				if firsts[2] ~= nil then
-					local firstsub = string.sub(firsts[2], 0, 1)
-					local secondsub = string.sub(firsts[2], 2)
-					if string.len(secondsub) == 0 then
-						stringed = firsts[1]..firstsub..chosen
-					else
-						stringed = firsts[1]..firstsub.."."..secondsub..chosen
-					end
-				else
-					if string.len(firsts[1]) == 1 then
-						stringed = first.."0"..chosen
-					else
-						stringed = first..""..chosen
-					end
-				end
-			end
-		end
+	first = tonumber(first)
+	second = tonumber(second)
+	
+	local secondRemainder = second % 3
+	first *= 10^secondRemainder
+	
+	local suffixIndex = math.floor(second/3)
+	local str = math.floor(first * 10)/10
+	
+	if suffixIndex > 0 then
+		str ..= suffixes[suffixIndex] or "e+"..second
 	end
 
-	if stringed == nil then
-		local firstsub = string.sub(first, 0, 4)
-		stringed = firstsub.."e+"..second
-	end
-
-	return stringed
+	return str
 end
 
 return Number
