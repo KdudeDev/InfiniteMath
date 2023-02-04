@@ -198,7 +198,7 @@ end
 
 function Number:Reverse()
 	local numbers =  self.val:split(',')
-	return math.floor(numbers[1].."e+"..numbers[2])
+	return tonumber(numbers[1].."e+"..numbers[2])
 end
 
 function Number:ScientificNotation()
