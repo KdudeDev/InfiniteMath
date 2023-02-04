@@ -27,9 +27,9 @@ Lets say we want to use 1000 with the module, we take the coefficient (1) and th
 
 "1, 3"
 
-Now if we did something like 1000 + 100, we would get
+Now if we did something like "1, 3" (1000) + "1, 2" (100), we would get:
 
-"1.1, 3"
+"1.1, 3" (1100)
 
 And since we're not using numbers, we can go above the limit. For example, "1, 1000" is equal to 1 with 1000 zeros, or 1 Untrigintatrecentillion. We can continue all the way up until reaching 1e+308 zeros, which would look like:
 
