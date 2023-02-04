@@ -232,7 +232,8 @@ function Number:GetSuffix()
 	if second ~= 0 then
 		first, second = fixNumber(first, second)
 	end
-
+	first = tostring(first)
+	
 	local stringed = nil
 
 	if second == 0 then
@@ -262,7 +263,7 @@ function Number:GetSuffix()
 		local firsts = first:split(".")
 
 		if firsts[2] ~= nil then
-			local firstsub = firsts[2]:split(0, 2)
+			local firstsub = firsts[2]:sub(0, 2)
 			local secondsub = string.sub(firsts[2], 2)
 			stringed = firsts[1]..firstsub
 			
