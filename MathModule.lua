@@ -179,7 +179,6 @@ function Number.__tostring(self)
 	return self:GetSuffix()
 end
 
-
 ---- Class methods -----
 function Number.new(val)
 	-- fix up val for evaluation
@@ -208,7 +207,7 @@ function Number:ScientificNotation()
 	return numbers[1]:sub(0, 4).."e+"..numbers[2]
 end
 
-function Number:GetAbbSuffix()
+function Number:GetSuffix(abbreviation)
 	local numbers =  self.val:split(',')
 	local first, second = numbers[1], numbers[2]
 
@@ -221,28 +220,10 @@ function Number:GetAbbSuffix()
 	local suffixIndex = math.floor(second/3)
 	local str = math.floor(first * 10)/10
 
-	if suffixIndex > 0 then
-		str ..= " " .. full_names[suffixIndex] or "e+"..second
-	end
-
-	return str
-end
-
-function Number:GetSuffix()
-	local numbers =  self.val:split(',')
-	local first, second = numbers[1], numbers[2]
-
-	first = tonumber(first)
-	second = tonumber(second)
-
-	local secondRemainder = second % 3
-	first *= 10^secondRemainder
-
-	local suffixIndex = math.floor(second/3)
-	local str = math.floor(first * 10)/10
+	local suffix = if abbreviation then suffixes[suffixIndex] else  (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
 
 	if suffixIndex > 0 then
-		str ..= suffixes[suffixIndex] or "e+"..second
+		str ..= suffix or "e+"..second
 	end
 
 	return str
