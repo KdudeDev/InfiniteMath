@@ -220,7 +220,7 @@ function Number:GetSuffix(abbreviation)
 	local suffixIndex = math.floor(second/3)
 	local str = math.floor(first * 10)/10
 
-	local suffix = if abbreviation then suffixes[suffixIndex] else  " " .. (full_names[suffixIndex] or "")
+	local suffix = if abbreviation then suffixes[suffixIndex] else  (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
 
 	if suffixIndex > 0 then
 		str ..= suffix or "e+"..second
