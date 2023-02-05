@@ -67,8 +67,6 @@ local function checkNumbers(a, b)
 	return a, b
 end
 
-
-
 -- math metamethods:
 function Number.__add(a, b)
 	a, b =  checkNumbers(a, b)
@@ -199,7 +197,7 @@ end
 
 function Number:Reverse()
 	local numbers =  self.val:split(',')
-	return math.floor(numbers[1].."e+"..numbers[2])
+	return tonumber(numbers[1].."e+"..numbers[2])
 end
 
 function Number:ScientificNotation()
@@ -222,8 +220,10 @@ function Number:GetSuffix(abbreviation)
 	local suffixIndex = math.floor(second/3)
 	local str = math.floor(first * 10)/10
 
+	local suffix = if abbreviation then suffixes[suffixIndex] else  " " .. (full_names[suffixIndex] or "")
+
 	if suffixIndex > 0 then
-		str ..= (abbreviation and suffixes[suffixIndex] or " " .. full_names[suffixIndex]) or "e+"..second
+		str ..= suffix or "e+"..second
 	end
 
 	return str
