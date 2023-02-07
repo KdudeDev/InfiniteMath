@@ -1,0 +1,27 @@
+title = "InfiniteMath"
+gitRepoUrl = "https://KdudeDev.github.io/infinitemath"
+
+classOrder = []
+gitSourceBranch = "main"
+changelog = true
+
+[docusaurus]
+url = "https://KdudeDev.github.io/"
+baseUrl = "/infinitemath/"  
+tagline = "Go Above Infinity in this Module."
+favicon = "/favicon.png"
+
+[navbar]
+title = ""
+
+[navbar.logo]
+src = "/logo.png"
+
+[home]
+
+enabled = true
+includeReadme = false
+
+[footer]
+style = "dark"
+copyright = "Copyright © 2023 InfiniteMath. Built with Moonwave and Docusaurus."
