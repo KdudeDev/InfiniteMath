@@ -39,13 +39,13 @@ local function convert(number)
 	local first
 	local second = #numberStr - 1
 	
-	if numberStr:match("e") then
+	if string.match(numberStr, "e") then
 		second = numberStr:split("+")[2]
 		first = numberStr:split("e")[1]
-	elseif numberStr:match("inf") then
+	elseif string.match(numberStr, "inf") then
 		second = "inf"
 		first = "inf"
-	elseif numberStr:match("nan") then
+	elseif string.match(numberStr, "nan") then
 		second = "nan"
 		first = "nan"
 	else
