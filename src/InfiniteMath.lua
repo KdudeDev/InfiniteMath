@@ -35,10 +35,17 @@ end
 local function convert(number)
 	-- get string representation
 	local numberStr = tostring(number)
+	local removed = 0
+	
+	if string.match(numberStr, ".") then
+		local split = string.split(numberStr, ".")
+		numberStr = split[1]..""..split[2]
+		removed = #split[2]
+	end
 
 	local first
-	local second = #numberStr - 1
-	
+	local second = #numberStr - 1 - removed
+
 	if string.match(numberStr, "e") then
 		second = numberStr:split("+")[2]
 		first = numberStr:split("e")[1]
@@ -54,7 +61,7 @@ local function convert(number)
 		else
 			local firstZ = numberStr:sub(1, 1)
 			local secondZ = numberStr:sub(2)
-			
+
 			if tonumber(secondZ) > 0 then
 				first = firstZ.."."..secondZ
 			else
@@ -220,7 +227,7 @@ end
 
 function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
-	
+
 	local numbers =  self.val:split(',')
 	local first, second = numbers[1], numbers[2]
 
