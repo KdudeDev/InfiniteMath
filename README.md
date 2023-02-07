@@ -76,21 +76,15 @@ There are also functions on a constructed number that you can use.
 
 # Functions
 
-### GetAbbSuffix
-
-GetAbbSuffix will return a string with the number and an abbreviated suffix at the end, these suffixes will go up to `1e+12000`. After, it will default to returning scientific notation.
-```lua
-print(IM.new(1000):GetAbbSuffix())
-```
-This will print `1K`
-
 ### GetSuffix
 
 GetSuffix will return a string with the number and a suffix at the end, these suffixes will go up to `1e+12000`. After, it will default to returning scientific notation.
+
+By default, it will return an abbreviated suffix (1K). Using `true` will use the default behavior. Using false will return the full suffix (1 Thousand)
 ```lua
-print(IM.new(1000):GetSuffix())
+print(IM.new(1000):GetSuffix(), IM.new(1000):GetSuffix(true), IM.new(1000):GetSuffix(false))
 ```
-This will print `1 Thousand`
+This will print `1K 1K 1 Thousand`
 
 ### ScientificNotation
 
