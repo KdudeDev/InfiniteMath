@@ -6,10 +6,8 @@ Number.__index = Number
 ----- Private variables -----
 local THRESHOLD = 10
 
-local valuesFolder = script.Parent:WaitForChild("Values")
-local suffixes = require(valuesFolder.suffixes)
-
-local full_names = require(valuesFolder.full_names)
+local suffixes = require(script.Suffixes)
+local full_names = require(script.FullNames)
 
 local numberPrecision = 3 -- How many digits after the decimal point to show
 
@@ -212,6 +210,8 @@ function Number:ScientificNotation()
 end
 
 function Number:GetSuffix(abbreviation)
+	if abbreviation == nil then abbreviation = true end
+	
 	local numbers =  self.val:split(',')
 	local first, second = numbers[1], numbers[2]
 
