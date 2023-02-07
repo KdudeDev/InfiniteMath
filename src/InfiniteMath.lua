@@ -198,7 +198,7 @@ function Number:GetZeroes()
 end
 
 function Number:Reverse()
-	local numbers =  self.val:split(',')
+	local numbers =  self.val:split(', ')
 	return tonumber(numbers[1].."e+"..numbers[2])
 end
 
