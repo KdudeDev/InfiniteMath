@@ -36,8 +36,8 @@ local function convert(number)
 	-- get string representation
 	local numberStr = tostring(number)
 	local removed = 0
-	
-	if string.match(numberStr, ".") then
+
+	if string.match(numberStr, "%.") then
 		local split = string.split(numberStr, ".")
 		numberStr = split[1]..""..split[2]
 		removed = #split[2]
@@ -57,7 +57,7 @@ local function convert(number)
 		first = "nan"
 	else
 		if #numberStr == 1 then
-			first = Number
+			first = number
 		else
 			local firstZ = numberStr:sub(1, 1)
 			local secondZ = numberStr:sub(2)
@@ -149,19 +149,32 @@ function Number.__div(a, b)
 	return Number.new(`{first1},{second1}`)
 end
 
--- TODO: make this compatible with other numbers of class 'Number'
 function Number.__pow(a, power)
 	local first, second = fixNumber(table.unpack(a.val:split(',')))
-
+	
+	if typeof(power) ~= "number" then
+		power = power:Reverse()
+	end
+	
+	local answer = 1
+	
 	if power > 1 then
-		local orig = first
-		for _ = 1, power - 1 do
-			first *= orig
+		while power > 0 do
+			local lastBit = (bit32.band(power, 1) == 1)
+			
+			if lastBit then
+				answer *= first
+			end
+			
+			first *= first
+			
+			power = bit32.rshift(power, 1)
 		end
-		second *= power
+	elseif power == 0 then
+		first, second = 1, 0
 	end
 
-	first, second = fixNumber(first, second)
+	first, second = fixNumber(answer, second)
 	return Number.new(`{first},{second}`)
 end
 
@@ -214,7 +227,8 @@ function Number:GetZeroes()
 end
 
 function Number:Reverse()
-	local numbers =  self.val:split(', ')
+	self.val = self.val:gsub(" ", "")
+	local numbers = self.val:split(',')
 	return tonumber(numbers[1].."e+"..numbers[2])
 end
 
@@ -228,7 +242,7 @@ end
 function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
 
-	local numbers =  self.val:split(',')
+	local numbers = self.val:split(',')
 	local first, second = numbers[1], numbers[2]
 
 	first = tonumber(first)
