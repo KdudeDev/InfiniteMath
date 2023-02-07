@@ -48,16 +48,15 @@ To start using InfiniteMath, first you want to construct a new number. To do so,
 local Number = IM.new(1)
 ```
 
-Printing this will give us `"1, 0"`
+The number is stored as `"1, 0"`
 From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==)`
 
 ```lua
 local Number = IM.new(1)
 
 Number += 1
-print(Number)
 ```
-This will print `"2, 0"` to console.
+Now the number is `"2, 0"`, or `2`.
 
 We can use normal numbers or other constructed numbers in math.
 ```lua
@@ -66,7 +65,7 @@ IM.new(1) + 1
 IM.new(1) + IM.new(1)
 ```
 
-For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers, and only normal numbers with normal numbers. Attempting to do
+For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers. Attempting to do
 ```lua
 print(IM.new(1) == 2)
 ```
