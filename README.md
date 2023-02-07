@@ -43,13 +43,13 @@ And if we tried to display that as a number, it would return `1e+1.e+308`, aka 1
 
 # Constructing a number
 
-To start using InfiniteMath, first you want to construct a new number. To do so, we use `IM.new(number)` (We'll say IM is InfiniteMath from now on)
+To start using InfiniteMath, first you want to construct a new number. To do so, we use `IM.new(number)` (We'll say IM is InfiniteMath from now on).
 ```lua
 local Number = IM.new(1)
 ```
 
-The number is stored as `"1, 0"`
-From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==)`
+The number is stored as `"1, 0"`.
+From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==)`.
 
 ```lua
 local Number = IM.new(1)
@@ -65,7 +65,7 @@ IM.new(1) + 1
 IM.new(1) + IM.new(1)
 ```
 
-For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers. Attempting to do
+For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers. Attempting to do:
 ```lua
 print(IM.new(1) == 2)
 ```
@@ -79,27 +79,27 @@ There are also functions on a constructed number that you can use.
 
 GetSuffix will return a string with the number and a suffix at the end, these suffixes will go up to `1e+12000`. After, it will default to returning scientific notation.
 
-By default, it will return an abbreviated suffix (1K). Using `true` will use the default behavior. Using false will return the full suffix (1 Thousand)
+By default, it will return an abbreviated suffix (1K). Using `true` will use the default behavior. Using false will return the full suffix (1 Thousand).
 ```lua
 print(IM.new(1000):GetSuffix(), IM.new(1000):GetSuffix(true), IM.new(1000):GetSuffix(false))
 ```
-This will print `1K 1K 1 Thousand`
+This will print `1K 1K 1 Thousand`.
 
 ### ScientificNotation
 
-ScientificNotation will return a string with the number formatted in scientific notation
+ScientificNotation will return a string with the number formatted in scientific notation.
 ```lua
 print(IM.new(1000):ScientificNotation())
 ```
-This will print `1e+3`
+This will print `1e+3`.
 
 ### Reverse
 
-Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`
+Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`.
 ```lua
 print(IM.new("1, 3"):Reverse())
 ```
-This will print `1000`
+This will print `1000`.
 
 ### GetZeros
 
@@ -107,4 +107,4 @@ GetZeros will return the amount of zeros in the constructed number.
 ```lua
 print(IM.new(1000):GetZeros())
 ```
-This will print `3`
+This will print `3`.
