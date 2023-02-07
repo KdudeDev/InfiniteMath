@@ -66,11 +66,11 @@ IM.new(1) + 1
 IM.new(1) + IM.new(1)
 ```
 
-For comparing `(<, >, <=, >=, ==)` you can only compare constructed numbers with constructed numbers, and only normal numbers with normal numbers. Attempting to do
+For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers, and only normal numbers with normal numbers. Attempting to do
 ```lua
 print(IM.new(1) == 2)
 ```
-Will give you the error `attempt to compare number == table`
+Will give you the error `attempt to compare number == table`. Sadly this is unavoidable, as it's a limitation of metatables.
 
 There are also functions on a constructed number that you can use.
 
