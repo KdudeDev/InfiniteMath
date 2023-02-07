@@ -38,7 +38,7 @@ local function convert(number)
 
 	local first
 	local second = #numberStr - 1
-
+	
 	if numberStr:match("e") then
 		second = numberStr:split("+")[2]
 		first = numberStr:split("e")[1]
@@ -48,10 +48,19 @@ local function convert(number)
 	elseif numberStr:match("nan") then
 		second = "nan"
 		first = "nan"
-	elseif second >= 1 then
-		first = numberStr:sub(1, 1).."."..numberStr:sub(2, THRESHOLD)
 	else
-		first = number
+		if #numberStr == 1 then
+			first = Number
+		else
+			local firstZ = numberStr:sub(1, 1)
+			local secondZ = numberStr:sub(2)
+			
+			if tonumber(secondZ) > 0 then
+				first = firstZ.."."..secondZ
+			else
+				first = firstZ
+			end
+		end
 	end
 
 	return `{first},{second}`
