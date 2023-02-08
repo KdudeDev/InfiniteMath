@@ -5,6 +5,7 @@ Number.__index = Number
 
 ----- Private variables -----
 local THRESHOLD = 10
+local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 4 -- How accurate leaderboards are
 
 local suffixes = require(script.Suffixes)
 local full_names = require(script.FullNames)
@@ -156,26 +157,26 @@ function Number.__pow(a, power)
 		power = power:Reverse()
 	end
 	
-	local answer = 1
+	local answer = Number.new(1)
 	
 	if power > 1 then
 		while power > 0 do
 			local lastBit = (bit32.band(power, 1) == 1)
 			
 			if lastBit then
-				answer *= first
+				answer *= a
 			end
 			
-			first *= first
-			
+			a *= a
+
 			power = bit32.rshift(power, 1)
 		end
 	elseif power == 0 then
 		first, second = 1, 0
 	end
 
-	first, second = fixNumber(answer, second)
-	return Number.new(`{first},{second}`)
+	local firstAnswer, secondAnswer = fixNumber(table.unpack(answer.val:split(',')))
+	return Number.new(`{firstAnswer},{secondAnswer}`)
 end
 
 function Number.__eq(a, b)
@@ -227,23 +228,22 @@ function Number:GetZeroes()
 end
 
 function Number:Reverse()
-	self.val = self.val:gsub(" ", "")
-	local numbers = self.val:split(',')
-	return tonumber(numbers[1].."e+"..numbers[2])
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	
+	return tonumber(tostring(first):sub(0, numberPrecision + 1).."e+"..second)
 end
 
 function Number:ScientificNotation()
-	local numbers =  self.val:split(',')
-	local first, second = numbers[1], numbers[2]
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	first, second = tostring(first), tostring(second)
 
-	return numbers[first]:sub(0, numberPrecision + 1).."e+"..numbers[second] -- Add 1 to numberPrecision to account for the decimal point
+	return first:sub(0, numberPrecision + 1).."e+"..second -- Add 1 to numberPrecision to account for the decimal point
 end
 
 function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
 
-	local numbers = self.val:split(',')
-	local first, second = numbers[1], numbers[2]
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
 
 	first = tonumber(first)
 	second = tonumber(second)
@@ -261,6 +261,29 @@ function Number:GetSuffix(abbreviation)
 	end
 
 	return str
+end
+
+function Number:ConvertForLeaderboards()
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	first, second = tostring(first), tostring(second)
+	
+	first = first:gsub("%.", "")
+	
+	return math.floor(tonumber(second.."."..first:sub(1, DECIMALPOINT)) * LEADERBOARDPRECISION)
+end
+
+function Number:ConvertFromLeaderboards(GivenNumber)
+	GivenNumber /= LEADERBOARDPRECISION
+	
+	local numbers = tostring(GivenNumber):split('.')
+	local second, first = numbers[1], numbers[2]
+	
+	local firstFirst = tostring(first):sub(1, 1)
+	local firstSecond = tostring(first):sub(2)
+	
+	first = firstFirst.."."..firstSecond
+
+	return Number.new(`{first},{second}`)
 end
 
 function Number.ChangePrecision(n) 
