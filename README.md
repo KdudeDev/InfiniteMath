@@ -75,23 +75,6 @@ There are also functions on a constructed number that you can use.
 
 # Functions
 
-### Number:ConvertForLeaderboards
-
-ConvertForLeaderboards will return a number that you can use for OrderedDataStores in order to create global leaderboards that have the same limit as InfinteMath.
-```lua
-print(IM.new(1000):ConvertForLeaderboards())
-```
-This will print `31000`.
-
-### InfiniteMath:ConvertFromLeaderboards
-
-ConvertFromLeaderboards will return a constructed number, and should be given a number created by Number:ConvertForLeaderboards. This is what you will display on global leaderboards using OrderedDataStores.
-```lua
-local ValueFromStore = IM.new(1000):ConvertForLeaderboards()
-print(IM:ConvertFromLeaderboards(ValueFromStore))
-```
-This will print `1K`.
-
 ### Number:GetSuffix
 
 GetSuffix will return a string with the number and a suffix at the end, these suffixes will go up to `1e+12000`. After, it will default to returning scientific notation.
@@ -125,3 +108,20 @@ GetZeros will return the amount of zeros in the constructed number.
 print(IM.new(1000):GetZeros())
 ```
 This will print `3`.
+
+### Number:ConvertForLeaderboards
+
+ConvertForLeaderboards will return a number that you can use for OrderedDataStores in order to create global leaderboards that have the same limit as InfinteMath.
+```lua
+print(IM.new(1000):ConvertForLeaderboards())
+```
+This will print `31000`.
+
+### InfiniteMath:ConvertFromLeaderboards
+
+ConvertFromLeaderboards will return a constructed number, and should be given a number created by Number:ConvertForLeaderboards. This is what you will display on global leaderboards using OrderedDataStores.
+```lua
+local ValueFromStore = IM.new(1000):ConvertForLeaderboards()
+print(IM:ConvertFromLeaderboards(ValueFromStore))
+```
+This will print `1K`.
