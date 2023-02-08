@@ -2,7 +2,7 @@
 
 InfiniteMath is a module that allows you to surpass the double-precision floating-point number limit which is:
 
-> 2.2250738585072014e-308 to 1.7976931348623158e+308
+> -2.2250738585072014e+308 to 1.7976931348623158e+308
 
 Or for math geeks out there:
 
@@ -13,7 +13,7 @@ InfiniteMath uses strings instead of numbers in a clever way to get around the l
 
 InfiniteMath's limit is about:
 
-> 1e+1e-308 to 1e+1e+308
+> -1e+1e+308 to 1e+1e+308
 
 Or
 
