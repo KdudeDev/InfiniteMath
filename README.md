@@ -14,7 +14,9 @@ InfiniteMath uses strings instead of numbers in a clever way to get around the l
 InfiniteMath's limit is about:
 
 > 1e+1e-308 to 1e+1e+308
+
 Or
+
 > -1 * 10^(1 * 10^308) to 1 * 10^(1 * 10^308)
 
 In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 1e+308 zeros.
