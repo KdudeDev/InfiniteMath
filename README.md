@@ -11,9 +11,19 @@ Or for math geeks out there:
 This is normally perfectly fine for games, but sometimes you might want to go past that limit, even just a little bit. InfiniteMath allows you to have practically infinite numbers.
 InfiniteMath uses strings instead of numbers in a clever way to get around the limit.
 
+InfiniteMath's limit is about:
+
+> 1e+1e-308 to 1e+1e+308
+Or
+> -1 * 10^(1 * 10^308) to 1 * 10^(1 * 10^308)
+
+In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 1e+308 zeros.
+
 There are suffixes up to `1e+12000`, after that all numbers will display scientific notation. If you want to see all the suffixes, here's a [google doc](https://docs.google.com/document/d/e/2PACX-1vTB2zhx8PCdu5HpV5kwqmNx8BV9RCv44qZaljlTb0Mm0nkzwMQ2cI6aupxrNktrlylsp-QnbES-XteP/pub) with them.
 
 If you have a list that goes higher than `1e+12000` (Trillinovenonagintanongentillion/TRNNA), by all means share it with me, I'd love to see it.
+
+Numbers constructed from InfiniteMath supports arithmetic operators `(+, -, *, /, *)` with constructed numbers and normal numbers, and comparison operators `(<, >, <=, >=, ==, ~=)` with other constructed numbers. InfiniteMath also has support for OrderedDataStores.
 
 # Explanation
 
@@ -49,7 +59,7 @@ local Number = IM.new(1)
 ```
 
 The number is stored as `"1, 0"`.
-From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==)`.
+From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==, ~=)`.
 
 ```lua
 local Number = IM.new(1)
@@ -65,7 +75,7 @@ IM.new(1) + 1
 IM.new(1) + IM.new(1)
 ```
 
-For comparing `(<, >, <=, >=, ==, ~=, etc.)` you can only compare constructed numbers with constructed numbers. Attempting to do:
+For comparing `(<, >, <=, >=, ==, ~=)` you can only compare constructed numbers with constructed numbers. Attempting to do:
 ```lua
 print(IM.new(1) == 2)
 ```
