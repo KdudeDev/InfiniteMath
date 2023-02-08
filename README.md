@@ -75,7 +75,24 @@ There are also functions on a constructed number that you can use.
 
 # Functions
 
-### GetSuffix
+### Number:ConvertForLeaderboards
+
+ConvertForLeaderboards will return a number that you can use for OrderedDataStores in order to create global leaderboards that have the same limit as InfinteMath.
+```lua
+print(IM.new(1000):ConvertForLeaderboards())
+```
+This will print `31000`.
+
+### InfiniteMath:ConvertFromLeaderboards
+
+ConvertFromLeaderboards will return a constructed number, and should be given a number created by Number:ConvertForLeaderboards. This is what you will display on global leaderboards using OrderedDataStores.
+```lua
+local ValueFromStore = IM.new(1000):ConvertForLeaderboards()
+print(IM:ConvertFromLeaderboards(ValueFromStore))
+```
+This will print `1K`.
+
+### Number:GetSuffix
 
 GetSuffix will return a string with the number and a suffix at the end, these suffixes will go up to `1e+12000`. After, it will default to returning scientific notation.
 
@@ -85,7 +102,7 @@ print(IM.new(1000):GetSuffix(), IM.new(1000):GetSuffix(true), IM.new(1000):GetSu
 ```
 This will print `1K 1K 1 Thousand`.
 
-### ScientificNotation
+### Number:ScientificNotation
 
 ScientificNotation will return a string with the number formatted in scientific notation.
 ```lua
@@ -93,7 +110,7 @@ print(IM.new(1000):ScientificNotation())
 ```
 This will print `1e+3`.
 
-### Reverse
+### Number:Reverse
 
 Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`.
 ```lua
@@ -101,7 +118,7 @@ print(IM.new("1, 3"):Reverse())
 ```
 This will print `1000`.
 
-### GetZeros
+### Number:GetZeros
 
 GetZeros will return the amount of zeros in the constructed number.
 ```lua
