@@ -1,6 +1,6 @@
-local Number = {
+local InfiniteMath = {}
+local Number = {}
 
-}
 Number.__index = Number
 
 ----- Private variables -----
@@ -13,23 +13,33 @@ local full_names = require(script.FullNames)
 ----- Private functions -----
 local function fixNumber(first, second)	
 	first = tonumber(first)
-	second = tonumber(second)
+	second = math.round(tonumber(second))
+	
+	local sign = if first < 0 then -1 else 1
+	local x
 
 	if first == 0 or (second == 0 and first < 1) then
 		return first, 0
 	elseif second == 0 and first == 0 then
 		return 0,0
-	else
-		local x = math.abs(first)
-		local sign = if first < 0 then -1 else 1
+	elseif first >= 1 * sign then
+		x = math.abs(first)
 
 		if math.floor(math.log10(x)) ~= 0 then -- Check if exponent is 0 then
 			second += math.floor(math.log10(x))
 			x /= 10^math.floor(math.log10(x))
 		end
+	elseif first < 1 * sign then
+		x = math.abs(first)
+		local log10 = math.abs(math.floor(math.log10(x))) - 1
 
-		return x*sign, second
+		if log10 ~= 0 then -- Check if exponent is 0 then
+			second -= log10
+			x *= 10^log10
+		end
 	end
+	
+	return x*sign, second
 end
 
 local function convert(number)
@@ -75,11 +85,11 @@ end
 
 local function checkNumbers(a, b)
 	if typeof(a) == 'number' then
-		a = Number.new(convert(a))
+		a = InfiniteMath.new(convert(a))
 	end
 
 	if typeof(b) == 'number' then
-		b = Number.new(convert(b))
+		b = InfiniteMath.new(convert(b))
 	end
 
 	return a, b
@@ -93,18 +103,18 @@ function Number.__add(a, b)
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
 	if math.abs(second1 - second2) > THRESHOLD then -- Check if difference in exponents is greater than threshold
 		if math.max(second1, second2) == second1 then
-			return Number.new(`{first1},{second1}`)
+			return InfiniteMath.new(`{first1},{second1}`)
 		end
 
-		return Number.new(`{first2},{second2}`)
+		return InfiniteMath.new(`{first2},{second2}`)
 	end
 
 	local difference = second1 - second2
 	first2 *= (10^-difference)
-
+	
 	first1, second1 = fixNumber(first1 + first2, second1)
 
-	return Number.new(`{first1},{second1}`)
+	return InfiniteMath.new(`{first1},{second1}`)
 end
 
 function Number.__sub(a, b)
@@ -114,17 +124,18 @@ function Number.__sub(a, b)
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
 	if math.abs(second1 - second2) > THRESHOLD then -- Check if difference in exponents is greater than threshold
 		if math.max(second1, second2) == second1 then
-			return Number.new(`{first1},{second1}`)
+			return InfiniteMath.new(`{first1},{second1}`)
 		end
 
-		return Number.new(`{first2},{second2}`)
+		return InfiniteMath.new(`{first2},{second2}`)
 	end
 
 	local difference = second1 - second2
 	first2 *= (10^-difference)
 
 	first1, second1 = fixNumber(first1 - first2, second1)
-	return Number.new(`{first1},{second1}`)
+
+	return InfiniteMath.new(`{first1},{second1}`)
 end
 
 function Number.__mul(a, b)
@@ -135,7 +146,7 @@ function Number.__mul(a, b)
 
 	first1, second1 = fixNumber(first1 * first2, second1 + second2)
 
-	return Number.new(`{first1},{second1}`)
+	return InfiniteMath.new(`{first1},{second1}`)
 end
 
 function Number.__div(a, b)
@@ -146,26 +157,28 @@ function Number.__div(a, b)
 
 	first1, second1 = fixNumber(first1/first2, second1 - second2)
 
-	return Number.new(`{first1},{second1}`)
+	return InfiniteMath.new(`{first1},{second1}`)
 end
 
 function Number.__pow(a, power)
-	local first, second = fixNumber(table.unpack(a.val:split(',')))
+	a, power = checkNumbers(a, power)
 	
+	local first, second = fixNumber(table.unpack(a.val:split(',')))
+
 	if typeof(power) ~= "number" then
 		power = power:Reverse()
 	end
-	
-	local answer = Number.new(1)
-	
+
+	local answer = InfiniteMath.new(1)
+
 	if power > 1 then
 		while power > 0 do
 			local lastBit = (bit32.band(power, 1) == 1)
-			
+
 			if lastBit then
 				answer *= a
 			end
-			
+
 			a *= a
 
 			power = bit32.rshift(power, 1)
@@ -175,7 +188,7 @@ function Number.__pow(a, power)
 	end
 
 	local firstAnswer, secondAnswer = fixNumber(table.unpack(answer.val:split(',')))
-	return Number.new(`{firstAnswer},{secondAnswer}`)
+	return InfiniteMath.new(`{firstAnswer},{secondAnswer}`)
 end
 
 function Number.__eq(a, b)
@@ -211,14 +224,18 @@ function Number.__tostring(self)
 end
 
 ---- Class methods -----
-function Number.new(val)
+function InfiniteMath.new(val)
 	-- fix up val for evaluation
+	if typeof(val) == "table" then
+		val = val.val
+	end
+	
 	if typeof(val) ~= 'string' or #val:split(',') ~= 2 then
 		val = convert(val)
 	end
-	
+
 	val = val:gsub(" ", "")
-	
+
 	local first, second = fixNumber(table.unpack(val:split(',')))
 	val = first..","..second
 
@@ -233,7 +250,7 @@ end
 
 function Number:Reverse()
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
-	
+
 	return tonumber(first.."e+"..second)
 end
 
@@ -256,7 +273,7 @@ function Number:GetSuffix(abbreviation)
 	first *= 10^secondRemainder
 
 	local suffixIndex = math.floor(second/3)
-	local str = math.floor(first * 10)/10
+	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
 	local suffix = if abbreviation then suffixes[suffixIndex] else (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
 
@@ -270,24 +287,24 @@ end
 function Number:ConvertForLeaderboards()
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
 	first, second = tostring(first), tostring(second)
-	
+
 	first = first:gsub("%.", "")
-	
+
 	return math.floor(tonumber(second.."."..first:sub(1, DECIMALPOINT)) * LEADERBOARDPRECISION)
 end
 
-function Number:ConvertFromLeaderboards(GivenNumber)
+function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 	GivenNumber /= LEADERBOARDPRECISION
-	
+
 	local numbers = tostring(GivenNumber):split('.')
 	local second, first = numbers[1], numbers[2]
-	
+
 	local firstFirst = tostring(first):sub(1, 1)
 	local firstSecond = tostring(first):sub(2)
-	
+
 	first = firstFirst.."."..firstSecond
 
-	return Number.new(`{first},{second}`)
+	return InfiniteMath.new(`{first},{second}`)
 end
 
-return Number
+return InfiniteMath
