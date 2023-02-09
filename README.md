@@ -57,16 +57,16 @@ And if we tried to display that as a number, it would return `1e+1.e+308`, aka 1
 
 # Constructing a number
 
-To start using InfiniteMath, first you want to construct a new number. To do so, we use `IM.new(number)` (We'll say IM is InfiniteMath from now on).
+To start using InfiniteMath, first you want to construct a new number. To do so, we use `InfiniteMath.new(number)`.
 ```lua
-local Number = IM.new(1)
+local Number = InfiniteMath.new(1)
 ```
 
 The number is stored as `"1, 0"`.
 From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==, ~=)`.
 
 ```lua
-local Number = IM.new(1)
+local Number = InfiniteMath.new(1)
 
 Number += 1
 ```
@@ -74,14 +74,14 @@ Now the number is `"2, 0"`, or `2`.
 
 We can use normal numbers or other constructed numbers in math.
 ```lua
-IM.new(1) + 1
+InfiniteMath.new(1) + 1
 --these are equal to eachother
-IM.new(1) + IM.new(1)
+InfiniteMath.new(1) + InfiniteMath.new(1)
 ```
 
 For comparing `(<, >, <=, >=, ==, ~=)` you can only compare constructed numbers with constructed numbers. Attempting to do:
 ```lua
-print(IM.new(1) == 2)
+print(InfiniteMath.new(1) == 2)
 ```
 Will give you the error `attempt to compare number == table`. Sadly this is unavoidable, as it's a limitation of metatables.
 
@@ -95,7 +95,7 @@ GetSuffix will return a string with the number and a suffix at the end, these su
 
 By default, it will return an abbreviated suffix (1K). Using `true` will use the default behavior. Using false will return the full suffix (1 Thousand).
 ```lua
-print(IM.new(1000):GetSuffix(), IM.new(1000):GetSuffix(true), IM.new(1000):GetSuffix(false))
+print(InfiniteMath.new(1000):GetSuffix(), InfiniteMath.new(1000):GetSuffix(true), InfiniteMath.new(1000):GetSuffix(false))
 ```
 This will print `1K 1K 1 Thousand`.
 
@@ -103,7 +103,7 @@ This will print `1K 1K 1 Thousand`.
 
 ScientificNotation will return a string with the number formatted in scientific notation.
 ```lua
-print(IM.new(1000):ScientificNotation())
+print(InfiniteMath.new(1000):ScientificNotation())
 ```
 This will print `1e+3`.
 
@@ -111,7 +111,7 @@ This will print `1e+3`.
 
 Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`.
 ```lua
-print(IM.new("1, 3"):Reverse())
+print(InfiniteMath.new("1, 3"):Reverse())
 ```
 This will print `1000`.
 
@@ -119,7 +119,7 @@ This will print `1000`.
 
 GetZeros will return the amount of zeros in the constructed number.
 ```lua
-print(IM.new(1000):GetZeros())
+print(InfiniteMath.new(1000):GetZeros())
 ```
 This will print `3`.
 
@@ -127,7 +127,7 @@ This will print `3`.
 
 ConvertForLeaderboards will return a number that you can use for OrderedDataStores in order to create global leaderboards that have the same limit as InfinteMath.
 ```lua
-print(IM.new(1000):ConvertForLeaderboards())
+print(InfiniteMath.new(1000):ConvertForLeaderboards())
 ```
 This will print `31000`.
 
@@ -135,7 +135,7 @@ This will print `31000`.
 
 ConvertFromLeaderboards will return a constructed number, and should be given a number created by Number:ConvertForLeaderboards. This is what you will display on global leaderboards using OrderedDataStores.
 ```lua
-local ValueFromStore = IM.new(1000):ConvertForLeaderboards()
-print(IM:ConvertFromLeaderboards(ValueFromStore))
+local ValueFromStore = InfiniteMath.new(1000):ConvertForLeaderboards()
+print(InfiniteMath:ConvertFromLeaderboards(ValueFromStore))
 ```
 This will print `1K`.
