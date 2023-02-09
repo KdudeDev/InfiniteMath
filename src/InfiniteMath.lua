@@ -10,10 +10,8 @@ local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 4 -- How accurate leaderboards
 local suffixes = require(script.Suffixes)
 local full_names = require(script.FullNames)
 
-local numberPrecision = 3 -- How many digits after the decimal point to show
-
 ----- Private functions -----
-local function fixNumber(first, second)
+local function fixNumber(first, second)	
 	first = tonumber(first)
 	second = tonumber(second)
 
@@ -29,6 +27,7 @@ local function fixNumber(first, second)
 			second += math.floor(math.log10(x))
 			x /= 10^math.floor(math.log10(x))
 		end
+
 		return x*sign, second
 	end
 end
@@ -217,6 +216,11 @@ function Number.new(val)
 	if typeof(val) ~= 'string' or #val:split(',') ~= 2 then
 		val = convert(val)
 	end
+	
+	val = val:gsub(" ", "")
+	
+	local first, second = fixNumber(table.unpack(val:split(',')))
+	val = first..","..second
 
 	return setmetatable({
 		val = val
@@ -230,14 +234,14 @@ end
 function Number:Reverse()
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
 	
-	return tonumber(tostring(first):sub(0, numberPrecision + 1).."e+"..second)
+	return tonumber(first.."e+"..second)
 end
 
 function Number:ScientificNotation()
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
 	first, second = tostring(first), tostring(second)
 
-	return first:sub(0, numberPrecision + 1).."e+"..second -- Add 1 to numberPrecision to account for the decimal point
+	return first.."e+"..second -- Add 1 to numberPrecision to account for the decimal point
 end
 
 function Number:GetSuffix(abbreviation)
@@ -284,10 +288,6 @@ function Number:ConvertFromLeaderboards(GivenNumber)
 	first = firstFirst.."."..firstSecond
 
 	return Number.new(`{first},{second}`)
-end
-
-function Number.ChangePrecision(n) 
-	numberPrecision = n
 end
 
 return Number
