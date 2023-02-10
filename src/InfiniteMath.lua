@@ -22,6 +22,15 @@ local function fixNumber(first, second)
 		return first, 0
 	elseif second == 0 and first == 0 then
 		return 0,0
+	elseif first < 1 * sign then
+		x = math.abs(first)
+		local log10 = math.abs(math.floor(math.log10(x)))
+
+		if log10 ~= 0 then -- Check if exponent is 0 then
+			second -= log10
+			x *= 10^log10
+		end
+		
 	elseif first >= 1 * sign then
 		x = math.abs(first)
 
@@ -29,14 +38,13 @@ local function fixNumber(first, second)
 			second += math.floor(math.log10(x))
 			x /= 10^math.floor(math.log10(x))
 		end
-	elseif first < 1 * sign then
-		x = math.abs(first)
-		local log10 = math.abs(math.floor(math.log10(x))) - 1
+	end
+	
+	if second < 0 then
+		local Pow = math.abs(second)
 
-		if log10 ~= 0 then -- Check if exponent is 0 then
-			second -= log10
-			x *= 10^log10
-		end
+		x /= 10^Pow
+		second += Pow
 	end
 	
 	return x*sign, second
@@ -161,7 +169,7 @@ function Number.__div(a, b)
 end
 
 function Number.__pow(a, power)
-	a, power = checkNumbers(a, power)
+	a, _ = checkNumbers(a, power)
 	
 	local first, second = fixNumber(table.unpack(a.val:split(',')))
 
@@ -170,6 +178,8 @@ function Number.__pow(a, power)
 	end
 
 	local answer = InfiniteMath.new(1)
+	
+	local firstAnswer, secondAnswer
 
 	if power > 1 then
 		while power > 0 do
@@ -183,11 +193,13 @@ function Number.__pow(a, power)
 
 			power = bit32.rshift(power, 1)
 		end
+		
+		firstAnswer, secondAnswer = fixNumber(table.unpack(answer.val:split(',')))
 	elseif power == 0 then
-		first, second = 1, 0
+		firstAnswer, secondAnswer = 1, 0
+	else
+		firstAnswer, secondAnswer = first, second
 	end
-
-	local firstAnswer, secondAnswer = fixNumber(table.unpack(answer.val:split(',')))
 	return InfiniteMath.new(`{firstAnswer},{secondAnswer}`)
 end
 
@@ -257,8 +269,10 @@ end
 function Number:ScientificNotation()
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
 	first, second = tostring(first), tostring(second)
+	
+	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
-	return first.."e+"..second -- Add 1 to numberPrecision to account for the decimal point
+	return str.."e+"..second -- Add 1 to numberPrecision to account for the decimal point
 end
 
 function Number:GetSuffix(abbreviation)
@@ -276,9 +290,13 @@ function Number:GetSuffix(abbreviation)
 	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
 	local suffix = if abbreviation then suffixes[suffixIndex] else (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
-
+	
 	if suffixIndex > 0 then
-		str ..= suffix or "e+"..second
+		if suffix ~= nil then
+			str ..= suffix
+		else
+			str = self:ScientificNotation()
+		end
 	end
 
 	return str
