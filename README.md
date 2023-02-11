@@ -111,6 +111,21 @@ print(InfiniteMath.new(1000):ScientificNotation())
 ```
 This will print `1e+3`.
 
+When a number reacher `1e+1000000` (1 with 1 million zeros), you can choose an abbreviation mode for the amount of zeros in the scientific notation. By default, it will use GetSuffix on the exponent `1e+1M`, but you can also choose to have it use scientific notation `1e+1e+6`.
+
+```lua
+print(InfiniteMath.new("1, 1e+6"):ScientificNotation())
+print(InfiniteMath.new("1, 1e+6"):ScientificNotation(true))
+print(InfiniteMath.new("1, 1e+6"):ScientificNotation(false))
+```
+This will print `1e+1M 1e+1M 1e+1e+6`.
+
+You can also use nil twice to stop the functionality and instead just display `1e+1000000`.
+```lua
+print(InfiniteMath.new("1, 1e+6"):ScientificNotation(nil, nil))
+```
+This will print `1e+1000000`.
+
 ### Number:Reverse
 
 Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`.
