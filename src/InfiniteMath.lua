@@ -266,11 +266,19 @@ function Number:Reverse()
 	return tonumber(first.."e+"..second)
 end
 
-function Number:ScientificNotation()
+function Number:ScientificNotation(abbreviation, abbreviate)
 	local first, second = fixNumber(table.unpack(self.val:split(',')))
 	first, second = tostring(first), tostring(second)
 	
 	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	
+	if tonumber(second) > 1e+6 and abbreviate ~= false then
+		if abbreviation == true or abbreviation == nil then
+			second = InfiniteMath.new(tonumber(second)):GetSuffix(true)
+		else
+			second = InfiniteMath.new(tonumber(second)):ScientificNotation(nil, false)
+		end
+	end
 
 	return str.."e+"..second -- Add 1 to numberPrecision to account for the decimal point
 end
@@ -295,7 +303,7 @@ function Number:GetSuffix(abbreviation)
 		if suffix ~= nil then
 			str ..= suffix
 		else
-			str = self:ScientificNotation()
+			str = self:ScientificNotation(abbreviation)
 		end
 	end
 
