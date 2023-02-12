@@ -11,9 +11,9 @@ InfiniteMath's limit is about:
 
 > -10^308^308 to 10^308^308
 
-In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 1e+308 zeros.
+In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 10^308 zeros.
 
-Fun fact, a googolplex is 1 * 10^(1 * 10^100), which means you can use a googolplex with InfiniteMath.
+Fun fact, a googolplex is 10^100^100, which means you can use a googolplex with InfiniteMath.
 
 Numbers constructed from InfiniteMath supports arithmetic operators `(+, -, *, /, ^, %)` with constructed numbers and normal numbers, and comparison operators `(<, >, <=, >=, ==, ~=)` with other constructed numbers. InfiniteMath also has support for OrderedDataStores.
 
