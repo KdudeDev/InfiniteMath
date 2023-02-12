@@ -97,7 +97,13 @@ new will create a new constructed number. You can use numbers `1`, correctly for
 ```lua
 print(InfiniteMath.new(1))
 ```
-This will print `1`
+This will print `1`.
+
+To create a number above `1e+308`, we can use strings.
+```lua
+print(InfiniteMath.new("1,1000"))
+```
+This will print `10DTL`.
 
 ### Number:GetSuffix
 
@@ -167,28 +173,28 @@ This will print `1K`.
 
 ### InfiniteMath.floor
 
-This is equivalent to `math.floor`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.floor`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.round
 
-This is equivalent to `math.round`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.round`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.abs
 
-This is equivalent to `math.abs`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.abs`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.ceil
 
-This is equivalent to `math.ceil`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.ceil`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.clamp
 
-This is equivalent to `math.clamp`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.clamp`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.min
 
-This is equivalent to `math.min`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.min`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
 
 ### InfiniteMath.max
 
-This is equivalent to `math.max`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+This is equivalent to `math.max`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
