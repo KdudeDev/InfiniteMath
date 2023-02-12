@@ -67,7 +67,7 @@ local Number = InfiniteMath.new(1)
 ```
 
 The number is stored as `"1, 0"`.
-From here we can do math operations on this number `(+, -, *, /, ^, %, >, <, >=, <=, ==, ~=)`.
+From here we can do math operations on this number `(+, -, *, /, ^, %)`.
 
 ```lua
 local Number = InfiniteMath.new(1)
