@@ -23,7 +23,7 @@ In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limi
 
 Fun fact, a googolplex is 1 * 10^(1 * 10^100), which means you can use a googolplex with InfiniteMath.
 
-Numbers constructed from InfiniteMath supports arithmetic operators `(+, -, *, /, ^)` with constructed numbers and normal numbers, and comparison operators `(<, >, <=, >=, ==, ~=)` with other constructed numbers. InfiniteMath also has support for OrderedDataStores.
+Numbers constructed from InfiniteMath supports arithmetic operators `(+, -, *, /, ^, %)` with constructed numbers and normal numbers, and comparison operators `(<, >, <=, >=, ==, ~=)` with other constructed numbers. InfiniteMath also has support for OrderedDataStores.
 
 There are also suffixes up to `1e+12000`, after that all numbers will display scientific notation. If you want to see all the suffixes, here's a [google doc](https://docs.google.com/document/d/e/2PACX-1vTB2zhx8PCdu5HpV5kwqmNx8BV9RCv44qZaljlTb0Mm0nkzwMQ2cI6aupxrNktrlylsp-QnbES-XteP/pub) with them.
 
@@ -67,7 +67,7 @@ local Number = InfiniteMath.new(1)
 ```
 
 The number is stored as `"1, 0"`.
-From here we can do math operations on this number `(+, -, *, /, ^, >, <, >=, <=, ==, ~=)`.
+From here we can do math operations on this number `(+, -, *, /, ^, %, >, <, >=, <=, ==, ~=)`.
 
 ```lua
 local Number = InfiniteMath.new(1)
@@ -158,3 +158,31 @@ local ValueFromStore = InfiniteMath.new(1000):ConvertForLeaderboards()
 print(InfiniteMath:ConvertFromLeaderboards(ValueFromStore))
 ```
 This will print `1K`.
+
+### InfiniteMath.floor
+
+This is equivalent to `math.floor`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.round
+
+This is equivalent to `math.round`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.abs
+
+This is equivalent to `math.abs`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.ceil
+
+This is equivalent to `math.ceil`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.clamp
+
+This is equivalent to `math.clamp`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.min
+
+This is equivalent to `math.min`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
+
+### InfiniteMath.max
+
+This is equivalent to `math.max`. You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`
