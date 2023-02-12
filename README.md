@@ -89,9 +89,15 @@ print(InfiniteMath.new(1) == 2)
 ```
 Will give you the error `attempt to compare number == table`. Sadly this is unavoidable, as it's a limitation of metatables.
 
-There are also functions on a constructed number that you can use.
-
 # Functions
+
+### InfiniteMath.new
+
+new will create a new constructed number. You can use numbers `1`, correctly formatted strings `"1,0"` and other constructed numbers `InfiniteMath.new(1)`.
+```lua
+print(InfiniteMath.new(1))
+```
+This will print `1`
 
 ### Number:GetSuffix
 
