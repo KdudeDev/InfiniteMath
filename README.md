@@ -1,23 +1,15 @@
 ![InfiniteMath](https://cdn.discordapp.com/attachments/542187455936462881/1072367668155383808/InfiniteMathLogo.png)
 
-InfiniteMath is a module that allows you to surpass the double-precision floating-point number limit which is:
+InfiniteMath is a module that allows you to surpass the double-precision floating-point number limit which about:
 
-> -2.2250738585072014e+308 to 1.7976931348623158e+308
-
-Or for math geeks out there:
-
-> (-2.2250738585072014 * 10^308) to (1.7976931348623158 * 10^308)
+> -10^308 to 10^308
 
 This is normally perfectly fine for games, but sometimes you might want to go past that limit, even just a little bit. InfiniteMath allows you to have practically infinite numbers.
 InfiniteMath uses strings instead of numbers in a clever way to get around the limit.
 
 InfiniteMath's limit is about:
 
-> -1e+1e+308 to 1e+1e+308
-
-Or
-
-> -1 * 10^(1 * 10^308) to 1 * 10^(1 * 10^308)
+> -10^308^308 to 10^308^308
 
 In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 1e+308 zeros.
 
