@@ -51,6 +51,10 @@ local function fixNumber(first, second)
 end
 
 local function convert(number)
+	if typeof(number) ~= "number" then
+		error('Type is not "number".')
+	end
+	
 	-- get string representation
 	local numberStr = tostring(number)
 	local removed = 0
@@ -91,21 +95,33 @@ local function convert(number)
 	return `{first},{second}`
 end
 
-local function checkNumbers(a, b)
+local function checkNumber(a)
+	if typeof(a) ~= "number" and typeof(a) ~= "string" and typeof(a) ~= "table" then
+		error('"'..typeof(a)..'" is not a valid type. Please only use "number", "string", or constructed numbers.')
+	end
+	
 	if typeof(a) == 'number' then
 		a = InfiniteMath.new(convert(a))
 	end
-
-	if typeof(b) == 'number' then
-		b = InfiniteMath.new(convert(b))
+	
+	if typeof(a) == 'string' then
+		a = InfiniteMath.new(a)
 	end
+	
+	if a.val == nil then
+		error('"string" is not correctly formatted. Correctly formatted strings look like "1,0".')
+	end
+	
+	return a
+end
 
-	return a, b
+function replaceChar(pos, str, r)
+	return table.concat{str:sub(1,pos-1), r, str:sub(pos+1)}
 end
 
 -- math metamethods:
 function Number.__add(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
@@ -126,7 +142,7 @@ function Number.__add(a, b)
 end
 
 function Number.__sub(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
@@ -147,7 +163,7 @@ function Number.__sub(a, b)
 end
 
 function Number.__mul(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
@@ -158,7 +174,7 @@ function Number.__mul(a, b)
 end
 
 function Number.__div(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
@@ -169,7 +185,7 @@ function Number.__div(a, b)
 end
 
 function Number.__pow(a, power)
-	a, _ = checkNumbers(a, power)
+	a = checkNumber(a)
 	
 	local first, second = fixNumber(table.unpack(a.val:split(',')))
 
@@ -203,12 +219,23 @@ function Number.__pow(a, power)
 	return InfiniteMath.new(`{firstAnswer},{secondAnswer}`)
 end
 
+function Number.__mod(a, b)
+	a, b = checkNumber(a), checkNumber(b)
+	
+	local divided = a / b
+	local floored = InfiniteMath.floor(divided)
+	
+	floored *= b
+	
+	return InfiniteMath.round(a - floored)
+end
+
 function Number.__eq(a, b)
 	return a.val == b.val
 end
 
 function Number.__lt(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
 
@@ -220,7 +247,7 @@ function Number.__lt(a, b)
 end
 
 function Number.__le(a, b)
-	a, b =  checkNumbers(a, b)
+	a, b = checkNumber(a), checkNumber(b)
 	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
 	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
 
@@ -231,19 +258,43 @@ function Number.__le(a, b)
 	return second1 < second2 and first1 >= 0
 end
 
+function Number.__unm(a)
+	a = checkNumber(a)
+	
+	return a * -1
+end
+
 function Number.__tostring(self)
 	return self:GetSuffix(true)
 end
 
 ---- Class methods -----
 function InfiniteMath.new(val)
+	if typeof(val) ~= "number" and typeof(val) ~= "string" and typeof(val) ~= "table" then
+		error('"'..typeof(val)..'" is not a valid type. Please only use "number", "string", or constructed numbers.')
+		return
+	end
+
 	-- fix up val for evaluation
 	if typeof(val) == "table" then
 		val = val.val
 	end
 	
 	if typeof(val) ~= 'string' or #val:split(',') ~= 2 then
-		val = convert(val)
+		if tonumber(val) == 1e+999 then
+			print(typeof(val))
+			if typeof(val) == "string" then
+				if string.match(val, "e+") then
+					local errorString = val:split("e+")
+					error('String formatted incorrectly. Please use "string" "'..errorString[1]..","..errorString[2]..'"')
+				else
+					error('String formatted incorrectly.')
+				end
+			else
+				error('INF number is not allowed. Please use "string" instead of "number" to go above INF. "string" limit is "1,1e+308"')
+			end
+		end
+		val = convert(tonumber(val))
 	end
 
 	val = val:gsub(" ", "")
@@ -331,6 +382,133 @@ function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 	first = firstFirst.."."..firstSecond
 
 	return InfiniteMath.new(`{first},{second}`)
+end
+
+---- Math methods -----
+
+function InfiniteMath.floor(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local firstSplit = tostring(first):split(".")
+	
+	if firstSplit[2] ~= nil then
+		first = firstSplit[2]:sub(1, 0 + second)
+		first = firstSplit[1].."."..first
+	end
+	
+	return InfiniteMath.new(`{first},{second}`)
+end
+
+function InfiniteMath.round(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	
+	if #tostring(first) <= second + 2 then return InfiniteMath.new(`{first},{second}`) end
+	
+	local firstSplit = tostring(first):split(".")
+
+	if firstSplit[2] ~= nil then
+		first = firstSplit[2]:sub(1, second)
+		
+		first = if first ~= "" then firstSplit[1].."."..first else firstSplit[1]
+		
+		if second > 0 then
+			if tonumber(first:sub(second + 2) + 1) < 10 then
+				first = replaceChar(second + 2, first, tonumber(first:sub(second + 2) + 1))
+			else
+				first = replaceChar(second + 2, first, 0)
+				first = replaceChar(second, first, tonumber(first:sub(second) + 1))
+			end
+		else
+			first = replaceChar(1, first, tonumber(first:sub(1, 1) + 1))
+		end
+	end
+
+	return InfiniteMath.new(`{first},{second}`)
+end
+
+function InfiniteMath.abs(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	
+	return InfiniteMath.new(`{math.abs(first)},{second}`)
+end
+
+function InfiniteMath.ceil(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	
+	return InfiniteMath.new(`{math.floor(first + 1)},{second}`)
+end
+
+function InfiniteMath.clamp(Num, Min, Max)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	Num = InfiniteMath.new(`{first},{second}`)
+	
+	if Min ~= nil then
+		Min = checkNumber(Min)
+		local firstMin, secondMin = fixNumber(table.unpack(Min.val:split(',')))
+		Min = InfiniteMath.new(`{firstMin},{secondMin}`)
+	else
+		Min = InfiniteMath.new(0)
+	end
+	
+	if Max ~= nil then
+		Max = checkNumber(Max)
+		local firstMax, secondMax = fixNumber(table.unpack(Max.val:split(',')))
+		Max = InfiniteMath.new(`{firstMax},{secondMax}`)
+	else
+		Max = InfiniteMath.new("1, 1e+308")
+	end
+	
+	Num = if Num < Min then Min elseif Num > Max then Max else Num
+	
+	return Num
+end
+
+function InfiniteMath.min(...)
+	local Numbers = {...}
+	if Numbers[1] == nil then
+		warn(`InfinteMath.min requires at least 1 parameter.`)
+		return
+	end
+	
+	for Index, Num in Numbers do
+		Numbers[Index] = checkNumber(Num)
+	end
+	
+	local Min = Numbers[1]
+	
+	for _, Num in Numbers do
+		if Num < Min then
+			Min = Num
+		end
+	end
+	
+	return Min
+end
+
+function InfiniteMath.max(...)
+	local Numbers = {...}
+	if Numbers[1] == nil then
+		warn(`InfinteMath.min requires at least 1 parameter.`)
+		return
+	end
+	
+	for Index, Num in Numbers do
+		Numbers[Index] = checkNumber(Num)
+	end
+
+	local Max = Numbers[1]
+
+	for _, Num in Numbers do
+		if Num > Max then
+			Max = Num
+		end
+	end
+
+	return Max
 end
 
 return InfiniteMath
