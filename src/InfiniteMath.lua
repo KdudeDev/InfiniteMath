@@ -470,8 +470,7 @@ end
 function InfiniteMath.min(...)
 	local Numbers = {...}
 	if Numbers[1] == nil then
-		warn(`InfinteMath.min requires at least 1 parameter.`)
-		return
+		error("InfiniteMath.min requires at least 1 argument.")
 	end
 	
 	for Index, Num in Numbers do
@@ -492,8 +491,7 @@ end
 function InfiniteMath.max(...)
 	local Numbers = {...}
 	if Numbers[1] == nil then
-		warn(`InfinteMath.min requires at least 1 parameter.`)
-		return
+		error("InfiniteMath.max requires at least 1 argument.")
 	end
 	
 	for Index, Num in Numbers do
