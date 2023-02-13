@@ -25,6 +25,8 @@ Here is an [uncopylocked game](https://www.roblox.com/games/12427031634/Infinite
 
 If you use InfiniteMath in your game, send it to me on Discord `Kdude#1774` and I'll add it to the DevForum post!
 
+Get it [here!](https://www.roblox.com/library/12473700145/InfiniteMath)
+
 # Explanation
 
 A normal number in Roblox looks like this:
