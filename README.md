@@ -21,7 +21,7 @@ There are also suffixes up to `1e+12000`, after that all numbers will display sc
 
 If you have a list that goes higher than `1e+12000` (Trillinovenonagintanongentillion/TRNNA), by all means share it with me, I'd love to see it.
 
-Here is an [uncopylocked game](https://www.roblox.com/games/12427031634/InfiniteMath-Demonstration) that uses InfiniteMath, its a simple idle game but it gets the point across.
+Here is an [uncopylocked game](https://www.roblox.com/games/12427031634/InfiniteMath-Demonstration) that uses InfiniteMath, its a simple idle game but it gets the point across, and here is a [video](https://www.youtube.com/watch?v=n2ReZtRgCmw) showing off that game.
 
 If you use InfiniteMath in your game, send it to me on Discord `Kdude#1774` and I'll add it to the DevForum post!
 
