@@ -4,7 +4,7 @@ local Number = {}
 Number.__index = Number
 
 ----- Private variables -----
-local THRESHOLD = 10
+local THRESHOLD = 10 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
 local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 4 -- How accurate leaderboards are
 
 local suffixes = require(script.Suffixes)
@@ -221,13 +221,19 @@ end
 
 function Number.__mod(a, b)
 	a, b = checkNumber(a), checkNumber(b)
+	local sign = InfiniteMath.sign(a)
 	
-	local divided = a / b
-	local floored = InfiniteMath.floor(divided)
+	local divided
 	
-	floored *= b
+	if sign == 1 then
+		divided = InfiniteMath.floor(a / b)
+	else
+		divided = InfiniteMath.round(a / b)
+	end
 	
-	return InfiniteMath.round(a - floored)
+	local nextNum = b * divided
+	
+	return a - nextNum
 end
 
 function Number.__eq(a, b)
@@ -388,30 +394,65 @@ end
 
 function InfiniteMath.floor(Num)
 	Num = checkNumber(Num)
+	local sign = InfiniteMath.sign(Num)
+	Num *= sign
+	
 	local first, second = fixNumber(table.unpack(Num.val:split(',')))
 	local firstSplit = tostring(first):split(".")
 	
 	if firstSplit[2] ~= nil then
-		first = firstSplit[2]:sub(1, 0 + second)
+		first = firstSplit[2]:sub(1, second)
 		first = firstSplit[1].."."..first
 	end
 	
-	return InfiniteMath.new(`{first},{second}`)
+	return InfiniteMath.new(`{first},{second}`) * sign
 end
 
 function InfiniteMath.round(Num)
 	Num = checkNumber(Num)
+	local sign = InfiniteMath.sign(Num)
+	Num *= sign
+	
 	local first, second = fixNumber(table.unpack(Num.val:split(',')))
 	
-	if #tostring(first) <= second + 2 then return InfiniteMath.new(`{first},{second}`) end
+	if #tostring(first) <= second + 2 then return Num * sign end
+	local firstSplit = tostring(first):split(".")
+
+	if firstSplit[2] ~= nil then
+		first = firstSplit[2]:sub(second + 1)
+		
+		if tonumber(firstSplit[2]) / 10^#first >= .5 then
+			return InfiniteMath.ceil(Num * sign)
+		else
+			return InfiniteMath.floor(Num * sign)
+		end
+	end
+
+	return Num * sign
+end
+
+function InfiniteMath.abs(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
 	
+	return InfiniteMath.new(`{math.abs(first)},{second}`)
+end
+
+function InfiniteMath.ceil(Num)
+	Num = checkNumber(Num)
+	local sign = InfiniteMath.sign(Num)
+	Num *= sign
+	
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+
+	if #tostring(first) <= second + 2 then return InfiniteMath.new(`{first},{second}`) end
+
 	local firstSplit = tostring(first):split(".")
 
 	if firstSplit[2] ~= nil then
 		first = firstSplit[2]:sub(1, second)
-		
 		first = if first ~= "" then firstSplit[1].."."..first else firstSplit[1]
-		
+
 		if second > 0 then
 			if tonumber(first:sub(second + 2) + 1) < 10 then
 				first = replaceChar(second + 2, first, tonumber(first:sub(second + 2) + 1))
@@ -424,21 +465,7 @@ function InfiniteMath.round(Num)
 		end
 	end
 
-	return InfiniteMath.new(`{first},{second}`)
-end
-
-function InfiniteMath.abs(Num)
-	Num = checkNumber(Num)
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
-	
-	return InfiniteMath.new(`{math.abs(first)},{second}`)
-end
-
-function InfiniteMath.ceil(Num)
-	Num = checkNumber(Num)
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
-	
-	return InfiniteMath.new(`{math.floor(first + 1)},{second}`)
+	return InfiniteMath.new(`{first},{second}`) * sign
 end
 
 function InfiniteMath.clamp(Num, Min, Max)
@@ -507,6 +534,54 @@ function InfiniteMath.max(...)
 	end
 
 	return Max
+end
+
+function InfiniteMath.sign(Num)
+	Num = checkNumber(Num)
+	local first, _ = fixNumber(table.unpack(Num.val:split(',')))
+	first = tonumber(first)
+
+	return if first > 0 then 1 elseif first < 0 then -1 else 0
+end
+
+function InfiniteMath.sqrt(Num)
+	return Num^.5
+end
+
+function InfiniteMath.fmod(a, b)
+	a, b = checkNumber(a), checkNumber(b)
+	
+	local divided = InfiniteMath.floor(a / b)
+	local nextNum = b * divided
+	
+	return a - nextNum
+end
+
+function InfiniteMath.modf(Num)
+	Num = checkNumber(Num)
+	local sign = InfiniteMath.sign(Num)
+	Num *= sign
+
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local firstSplit = tostring(first):split(".")
+
+	if firstSplit[2] ~= nil then
+		first = firstSplit[2]:sub(1, second)
+		first = firstSplit[1].."."..first
+		
+		local power = if second == 0 then 2 else second
+		local decimal
+		
+		if second > 0 then
+			decimal = firstSplit[2]:sub(power + 1) / 10^#firstSplit[2]:sub(power + 1)
+		else
+			decimal = firstSplit[2] / 10^#firstSplit[2]
+		end
+
+		return InfiniteMath.new(`{first},{second}`) * sign, decimal
+	end
+
+	return Num
 end
 
 return InfiniteMath
