@@ -4,8 +4,8 @@ local Number = {}
 Number.__index = Number
 
 ----- Private variables -----
-local THRESHOLD = 10 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
-local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 4 -- How accurate leaderboards are
+local THRESHOLD = 16 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
+local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 5 -- How accurate leaderboards are
 
 local suffixes = require(script.Suffixes)
 local full_names = require(script.FullNames)
@@ -59,7 +59,7 @@ local function convert(number)
 	local numberStr = tostring(number)
 	local removed = 0
 
-	if string.match(numberStr, "%.") then
+	if string.match(numberStr, "%.") and not string.match(numberStr, "e") then
 		local split = string.split(numberStr, ".")
 		numberStr = split[1]..""..split[2]
 		removed = #split[2]
@@ -288,7 +288,6 @@ function InfiniteMath.new(val)
 	
 	if typeof(val) ~= 'string' or #val:split(',') ~= 2 then
 		if tonumber(val) == 1e+999 then
-			print(typeof(val))
 			if typeof(val) == "string" then
 				if string.match(val, "e+") then
 					local errorString = val:split("e+")
@@ -300,6 +299,7 @@ function InfiniteMath.new(val)
 				error('INF number is not allowed. Please use "string" instead of "number" to go above INF. "string" limit is "1,1e+308"')
 			end
 		end
+		
 		val = convert(tonumber(val))
 	end
 
@@ -323,23 +323,6 @@ function Number:Reverse()
 	return tonumber(first.."e+"..second)
 end
 
-function Number:ScientificNotation(abbreviation, abbreviate)
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
-	first, second = tostring(first), tostring(second)
-	
-	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
-	
-	if tonumber(second) > 1e+6 and abbreviate ~= false then
-		if abbreviation == true or abbreviation == nil then
-			second = InfiniteMath.new(tonumber(second)):GetSuffix(true)
-		else
-			second = InfiniteMath.new(tonumber(second)):ScientificNotation(nil, false)
-		end
-	end
-
-	return str.."e+"..second -- Add 1 to numberPrecision to account for the decimal point
-end
-
 function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
 
@@ -355,7 +338,7 @@ function Number:GetSuffix(abbreviation)
 	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
 	local suffix = if abbreviation then suffixes[suffixIndex] else (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
-	
+
 	if suffixIndex > 0 then
 		if suffix ~= nil then
 			str ..= suffix
@@ -365,6 +348,76 @@ function Number:GetSuffix(abbreviation)
 	end
 
 	return str
+end
+
+function Number:ScientificNotation(abbreviation, abbreviate)
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	first, second = tostring(first), tostring(second)
+	
+	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	
+	if tonumber(second) > 1e+6 and abbreviate ~= false then
+		if abbreviation == true or abbreviation == nil then
+			second = InfiniteMath.new(tonumber(second)):GetSuffix(true)
+		else
+			second = InfiniteMath.new(tonumber(second)):ScientificNotation(nil, false)
+		end
+	end
+
+	return str.."e+"..second
+end
+
+function Number:LogarithmNotation()
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	first, second = tostring(first), tostring(second)
+
+	local suffixIndex = math.floor(second/3)
+
+	if suffixIndex == 0 then
+		local secondRemainder = second % 3
+		first *= 10^secondRemainder
+
+		return math.floor(first * 10)/10
+	end
+
+	local log = tostring(math.log10(first))
+
+	if string.match(log, "%.") then
+		log = string.split(log, ".")
+		log = log[2]:sub(1, 3)
+	end
+
+	return "e"..second.."."..log
+end
+
+local Alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+
+function Number:aaNotation()
+	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	
+	local secondRemainder = second % 3
+	first *= 10^secondRemainder
+	
+	local suffixIndex = math.floor(second/3)
+	
+	if suffixIndex < 5 then
+		return self:GetSuffix()
+	end
+	
+	local n = suffixIndex
+
+	local unitInt = n - 4
+	local secondUnit = unitInt % 26
+	local firstUnit = math.ceil(unitInt / 26)
+	
+	if firstUnit > 26 or secondUnit == 0 then
+		return self:ScientificNotation()
+	end
+	
+	local str = math.floor(first * 100)/100 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local unit = Alphabet[firstUnit]..Alphabet[secondUnit]
+	
+	return str..unit
 end
 
 function Number:ConvertForLeaderboards()
