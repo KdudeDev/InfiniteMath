@@ -134,6 +134,26 @@ print(InfiniteMath.new("1, 1e+6"):ScientificNotation(nil, nil))
 ```
 This will print `1e+1000000`.
 
+### Number:LogarithmNotation
+
+LogarithmNotation will return a string with the number formatted in logarithmic notation.
+```lua
+print(InfiniteMath.new(1000):ScientificNotation())
+```
+
+This will print `e3.0`
+
+### Number:aaNotation
+
+aaNotation will return a string with the number formatted in double letter notation.
+```lua
+print(InfiniteMath.new(1e+15):aaNotation())
+```
+
+This will print `1aa`
+
+Double letter notation will use GetSuffix up to `1e+14`. after `1e+15`, notation will be similar to GetSuffix but use 2 letters instead. `1e+16` is `10aa`, `1e+17` is `100aa`, `1e+18` is `1ab`. This goes up to `1e+2039` or `100zy`, after that it will use ScientificNotation.
+
 ### Number:Reverse
 
 Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above `1e+308` it will instead return `INF`.
