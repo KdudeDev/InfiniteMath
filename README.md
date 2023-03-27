@@ -230,3 +230,11 @@ This is equivalent to [math.fmod](https://create.roblox.com/docs/reference/engin
 ### InfiniteMath.modf
 
 This is equivalent to [math.modf](https://create.roblox.com/docs/reference/engine/libraries/math#modf). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+
+### InfiniteMath.log
+
+This is equivalent to [math.log](https://create.roblox.com/docs/reference/engine/libraries/math#log). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+
+### InfiniteMath.log10
+
+This is equivalent to [math.log10](https://create.roblox.com/docs/reference/engine/libraries/math#log10). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
