@@ -637,4 +637,17 @@ function InfiniteMath.modf(Num)
 	return Num
 end
 
+function InfiniteMath.log(Num, Base)
+	if Base == nil then Base = 2.7182818 end
+	
+	Num = checkNumber(Num)
+	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	
+	return math.log(first, Base) + math.log(10^second, Base)
+end
+
+function InfiniteMath.log10(Num)
+	return InfiniteMath.log(Num, 10)
+end
+
 return InfiniteMath
