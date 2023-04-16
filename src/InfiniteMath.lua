@@ -13,7 +13,7 @@ local full_names = require(script.FullNames)
 ----- Private functions -----
 local function fixNumber(first, second)	
 	first = tonumber(first)
-	second = math.round(tonumber(second))
+	second = math.clamp(math.round(second), 0, 1e+999)
 	
 	local sign = if first < 0 then -1 else 1
 	local x
@@ -38,6 +38,10 @@ local function fixNumber(first, second)
 			second += math.floor(math.log10(x))
 			x /= 10^math.floor(math.log10(x))
 		end
+	end
+	
+	if x == nil then
+		return 0/0, 0/0
 	end
 	
 	if second < 0 then
@@ -92,7 +96,7 @@ local function convert(number)
 		end
 	end
 
-	return `{first},{second}`
+	return first, second
 end
 
 local function checkNumber(a)
@@ -101,14 +105,14 @@ local function checkNumber(a)
 	end
 	
 	if typeof(a) == 'number' then
-		a = InfiniteMath.new(convert(a))
+		a = InfiniteMath.new(a)
 	end
 	
 	if typeof(a) == 'string' then
 		a = InfiniteMath.new(a)
 	end
 	
-	if a.val == nil then
+	if a.first == nil and a.second == nil then
 		error('"string" is not correctly formatted. Correctly formatted strings look like "1,0".')
 	end
 	
@@ -123,14 +127,14 @@ end
 function Number.__add(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
 	if math.abs(second1 - second2) > THRESHOLD then -- Check if difference in exponents is greater than threshold
 		if math.max(second1, second2) == second1 then
-			return InfiniteMath.new(`{first1},{second1}`)
+			return InfiniteMath.new({first1, second1})
 		end
 
-		return InfiniteMath.new(`{first2},{second2}`)
+		return InfiniteMath.new({first2, second2})
 	end
 
 	local difference = second1 - second2
@@ -138,20 +142,20 @@ function Number.__add(a, b)
 	
 	first1, second1 = fixNumber(first1 + first2, second1)
 
-	return InfiniteMath.new(`{first1},{second1}`)
+	return InfiniteMath.new({first1 , second1})
 end
 
 function Number.__sub(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
 	if math.abs(second1 - second2) > THRESHOLD then -- Check if difference in exponents is greater than threshold
 		if math.max(second1, second2) == second1 then
-			return InfiniteMath.new(`{first1},{second1}`)
+			return InfiniteMath.new({first1 ,second1})
 		end
 
-		return InfiniteMath.new(`{first2},{second2}`)
+		return InfiniteMath.new({first2, second2})
 	end
 
 	local difference = second1 - second2
@@ -159,35 +163,35 @@ function Number.__sub(a, b)
 
 	first1, second1 = fixNumber(first1 - first2, second1)
 
-	return InfiniteMath.new(`{first1},{second1}`)
+	return InfiniteMath.new({first1 , second1})
 end
 
 function Number.__mul(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
 
 	first1, second1 = fixNumber(first1 * first2, second1 + second2)
 
-	return InfiniteMath.new(`{first1},{second1}`)
+	return InfiniteMath.new({first1 , second1})
 end
 
 function Number.__div(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
-
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
+	
 	first1, second1 = fixNumber(first1/first2, second1 - second2)
 
-	return InfiniteMath.new(`{first1},{second1}`)
+	return InfiniteMath.new({first1 , second1})
 end
 
 function Number.__pow(a, power)
 	a = checkNumber(a)
 	
-	local first, second = fixNumber(table.unpack(a.val:split(',')))
+	local first, second = fixNumber(a.first, a.second)
 
 	if typeof(power) ~= "number" then
 		power = power:Reverse()
@@ -210,13 +214,13 @@ function Number.__pow(a, power)
 			power = bit32.rshift(power, 1)
 		end
 		
-		firstAnswer, secondAnswer = fixNumber(table.unpack(answer.val:split(',')))
+		firstAnswer, secondAnswer = fixNumber(answer.first, answer.second)
 	elseif power == 0 then
 		firstAnswer, secondAnswer = 1, 0
 	else
 		firstAnswer, secondAnswer = first, second
 	end
-	return InfiniteMath.new(`{firstAnswer},{secondAnswer}`)
+	return InfiniteMath.new({firstAnswer, secondAnswer})
 end
 
 function Number.__mod(a, b)
@@ -237,31 +241,37 @@ function Number.__mod(a, b)
 end
 
 function Number.__eq(a, b)
-	return a.val == b.val
+	a, b = checkNumber(a), checkNumber(b)
+
+	if tostring(a.first) == "nan" or tostring(b.first) == "nan" then 
+		return false 
+	end
+
+	return a.first == b.first and a.second == b.second
 end
 
 function Number.__lt(a, b)
 	a, b = checkNumber(a), checkNumber(b)
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
 
 	if second1 == second2 then
 		return first1 < first2
 	end
 
-	return second1 < second2 and first1 >= 0
+	return second1 < second2
 end
 
 function Number.__le(a, b)
 	a, b = checkNumber(a), checkNumber(b)
-	local first1, second1 = fixNumber(table.unpack(a.val:split(',')))
-	local first2, second2 = fixNumber(table.unpack(b.val:split(',')))
+	local first1, second1 = fixNumber(a.first, a.second)
+	local first2, second2 = fixNumber(b.first, b.second)
 
 	if second1 == second2 then
 		return first1 <= first2
 	end
 
-	return second1 < second2 and first1 >= 0
+	return second1 < second2
 end
 
 function Number.__unm(a)
@@ -275,50 +285,39 @@ function Number.__tostring(self)
 end
 
 ---- Class methods -----
-function InfiniteMath.new(val)
-	if typeof(val) ~= "number" and typeof(val) ~= "string" and typeof(val) ~= "table" then
-		error('"'..typeof(val)..'" is not a valid type. Please only use "number", "string", or constructed numbers.')
+function InfiniteMath.new(val)	
+	local first, second
+	
+	if typeof(val) == "table" then
+		if val.first ~= nil and val.second ~= nil then return val end
+		
+		first = val[1]
+		second = val[2]
+	elseif typeof(val) == "string" then
+		first, second = fixNumber(table.unpack(val:split(',')))
+	elseif typeof(val) == 'number' then
+		if val == 1e+999 then
+			error('INF number is not allowed. Please use "string" or "table" instead of "number" to go above INF.')
+		end
+		
+		first, second = convert(val)
+	else
+		error('"'..typeof(val)..'" is not a valid type. Please only use "number", "string", "table", or constructed numbers.')
 		return
 	end
 
-	-- fix up val for evaluation
-	if typeof(val) == "table" then
-		val = val.val
-	end
-	
-	if typeof(val) ~= 'string' or #val:split(',') ~= 2 then
-		if tonumber(val) == 1e+999 then
-			if typeof(val) == "string" then
-				if string.match(val, "e+") then
-					local errorString = val:split("e+")
-					error('String formatted incorrectly. Please use "string" "'..errorString[1]..","..errorString[2]..'"')
-				else
-					error('String formatted incorrectly.')
-				end
-			else
-				error('INF number is not allowed. Please use "string" instead of "number" to go above INF. "string" limit is "1,1e+308"')
-			end
-		end
-		
-		val = convert(tonumber(val))
-	end
-
-	val = val:gsub(" ", "")
-
-	local first, second = fixNumber(table.unpack(val:split(',')))
-	val = first..","..second
-
 	return setmetatable({
-		val = val
+		first = first,
+		second = second
 	}, Number)
 end
 
 function Number:GetZeroes()
-	return self.val:split(',')[2]
+	return self.second
 end
 
 function Number:Reverse()
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 
 	return tonumber(first.."e+"..second)
 end
@@ -326,7 +325,7 @@ end
 function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
 
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 
 	first = tonumber(first)
 	second = tonumber(second)
@@ -351,7 +350,7 @@ function Number:GetSuffix(abbreviation)
 end
 
 function Number:ScientificNotation(abbreviation, abbreviate)
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 	
 	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
@@ -368,7 +367,7 @@ function Number:ScientificNotation(abbreviation, abbreviate)
 end
 
 function Number:LogarithmNotation()
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 
 	local suffixIndex = math.floor(second/3)
@@ -393,7 +392,7 @@ end
 local Alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 function Number:aaNotation()
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 	
 	local secondRemainder = second % 3
 	first *= 10^secondRemainder
@@ -421,7 +420,7 @@ function Number:aaNotation()
 end
 
 function Number:ConvertForLeaderboards()
-	local first, second = fixNumber(table.unpack(self.val:split(',')))
+	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 
 	first = first:gsub("%.", "")
@@ -440,7 +439,7 @@ function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 
 	first = firstFirst.."."..firstSecond
 
-	return InfiniteMath.new(`{first},{second}`)
+	return InfiniteMath.new({first, second})
 end
 
 ---- Math methods -----
@@ -450,7 +449,7 @@ function InfiniteMath.floor(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 	
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 	local firstSplit = tostring(first):split(".")
 	
 	if firstSplit[2] ~= nil then
@@ -458,7 +457,7 @@ function InfiniteMath.floor(Num)
 		first = firstSplit[1].."."..first
 	end
 	
-	return InfiniteMath.new(`{first},{second}`) * sign
+	return InfiniteMath.new({first, second}) * sign
 end
 
 function InfiniteMath.round(Num)
@@ -466,7 +465,7 @@ function InfiniteMath.round(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 	
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 	
 	if #tostring(first) <= second + 2 then return Num * sign end
 	local firstSplit = tostring(first):split(".")
@@ -486,9 +485,9 @@ end
 
 function InfiniteMath.abs(Num)
 	Num = checkNumber(Num)
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 	
-	return InfiniteMath.new(`{math.abs(first)},{second}`)
+	return InfiniteMath.new({math.abs(first), second})
 end
 
 function InfiniteMath.ceil(Num)
@@ -496,9 +495,9 @@ function InfiniteMath.ceil(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 	
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 
-	if #tostring(first) <= second + 2 then return InfiniteMath.new(`{first},{second}`) end
+	if #tostring(first) <= second + 2 then return InfiniteMath.new({first, second}) end
 
 	local firstSplit = tostring(first):split(".")
 
@@ -518,29 +517,31 @@ function InfiniteMath.ceil(Num)
 		end
 	end
 
-	return InfiniteMath.new(`{first},{second}`) * sign
+	return InfiniteMath.new({first, second}) * sign
 end
 
 function InfiniteMath.clamp(Num, Min, Max)
 	Num = checkNumber(Num)
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
-	Num = InfiniteMath.new(`{first},{second}`)
+	local first, second = fixNumber(Num.first, Num.second)
+	Num = InfiniteMath.new({first, second})
 	
 	if Min ~= nil then
 		Min = checkNumber(Min)
-		local firstMin, secondMin = fixNumber(table.unpack(Min.val:split(',')))
-		Min = InfiniteMath.new(`{firstMin},{secondMin}`)
+		local firstMin, secondMin = fixNumber(Min.first, Min.second)
+		Min = InfiniteMath.new({firstMin, secondMin})
 	else
 		Min = InfiniteMath.new(0)
 	end
 	
 	if Max ~= nil then
 		Max = checkNumber(Max)
-		local firstMax, secondMax = fixNumber(table.unpack(Max.val:split(',')))
-		Max = InfiniteMath.new(`{firstMax},{secondMax}`)
+		local firstMax, secondMax = fixNumber(Max.first, Max.second)
+		Max = InfiniteMath.new({firstMax, secondMax})
 	else
 		Max = InfiniteMath.new("1, 1e+308")
 	end
+	
+	print(Num < Min, Num, Min)
 	
 	Num = if Num < Min then Min elseif Num > Max then Max else Num
 	
@@ -591,7 +592,7 @@ end
 
 function InfiniteMath.sign(Num)
 	Num = checkNumber(Num)
-	local first, _ = fixNumber(table.unpack(Num.val:split(',')))
+	local first, _ = fixNumber(Num.first, Num.second)
 	first = tonumber(first)
 
 	return if first > 0 then 1 elseif first < 0 then -1 else 0
@@ -615,7 +616,7 @@ function InfiniteMath.modf(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 	local firstSplit = tostring(first):split(".")
 
 	if firstSplit[2] ~= nil then
@@ -631,7 +632,7 @@ function InfiniteMath.modf(Num)
 			decimal = firstSplit[2] / 10^#firstSplit[2]
 		end
 
-		return InfiniteMath.new(`{first},{second}`) * sign, decimal
+		return InfiniteMath.new({first, second}) * sign, decimal
 	end
 
 	return Num
@@ -641,7 +642,7 @@ function InfiniteMath.log(Num, Base)
 	if Base == nil then Base = 2.7182818 end
 	
 	Num = checkNumber(Num)
-	local first, second = fixNumber(table.unpack(Num.val:split(',')))
+	local first, second = fixNumber(Num.first, Num.second)
 	
 	return math.log(first, Base) + math.log(10^second, Base)
 end
