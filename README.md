@@ -5,7 +5,7 @@ InfiniteMath is a module that allows you to surpass the double-precision floatin
 > -10^308 to 10^308
 
 This is normally perfectly fine for games, but sometimes you might want to go past that limit, even just a little bit. InfiniteMath allows you to have practically infinite numbers.
-InfiniteMath uses strings instead of numbers in a clever way to get around the limit.
+InfiniteMath stores 2 numbers instead of 1 in a clever way to get around the limit.
 
 InfiniteMath's limit is about:
 
@@ -37,21 +37,21 @@ A normal number in Roblox looks like this:
 
 Now if we were to convert that to InfiniteMath, it would look like:
 
-> "1, 0"
+> {1, 0}
 
 To explain, we can construct a string out of a number by taking the coefficient and the exponent, and splitting them up into a string.
 
 Lets say we want to use `1000` with the module, we take the coefficient (1) and the exponent, which the amount of zeros (3) and put them in a string:
 
-> "1, 3"
+> {1, 3}
 
-Now if we did something like `"1, 3" + "1, 2"`, we would get:
+Now if we did something like `{1, 3} + {1, 2}`, we would get:
 
-> "1.1, 3" (1100)
+> {1.1, 3} (1100)
 
 And since we're not using numbers, we can go above the limit. For example, `"1, 1000"` is equal to 1 with 1000 zeros, or 1 Untrigintatrecentillion. We can continue all the way up until reaching `1e+308` zeros, which would look like:
 
-> "1, 1e+308"
+> {1, 1e+308}
 
 And if we tried to display that as a number, it would return `1e+1.e+308`, aka 1 with `1 * 10^308` zeros. This is practically infinite, and if you ever have a use for going higher I will be very surprised.
 
@@ -62,7 +62,7 @@ To start using InfiniteMath, first you want to construct a new number. To do so,
 local Number = InfiniteMath.new(1)
 ```
 
-The number is stored as `"1, 0"`.
+The number is stored as `{1, 0}`.
 From here we can do math operations on this number `(+, -, *, /, ^, %)`.
 
 ```lua
@@ -70,7 +70,7 @@ local Number = InfiniteMath.new(1)
 
 Number += 1
 ```
-Now the number is `"2, 0"`, or `2`.
+Now the number is `{2, 0}`, or `2`.
 
 We can use normal numbers or other constructed numbers in math.
 ```lua
@@ -89,15 +89,16 @@ Will give you the error `attempt to compare number == table`. Sadly this is unav
 
 ### InfiniteMath.new
 
-new will create a new constructed number. You can use numbers `1`, correctly formatted strings `"1,0"` and other constructed numbers `InfiniteMath.new(1)`.
+new will create a new constructed number. You can use numbers `1`, correctly formatted strings `"1,0"`, tables `{1, 0}`, and other constructed numbers `InfiniteMath.new(1)`.
 ```lua
 print(InfiniteMath.new(1))
 ```
 This will print `1`.
 
-To create a number above `1e+308`, we can use strings.
+To create a number above `1e+308`, we can use strings or tables.
 ```lua
 print(InfiniteMath.new("1,1000"))
+print(InfiniteMath.new({1, 1000}))
 ```
 This will print `10DTL`.
 
@@ -189,52 +190,52 @@ This will print `1K`.
 
 ### InfiniteMath.floor
 
-This is equivalent to [math.floor](https://create.roblox.com/docs/reference/engine/libraries/math#floor). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.floor](https://create.roblox.com/docs/reference/engine/libraries/math#floor).
 
 ### InfiniteMath.round
 
-This is equivalent to [math.round](https://create.roblox.com/docs/reference/engine/libraries/math#round). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.round](https://create.roblox.com/docs/reference/engine/libraries/math#round).
 
 ### InfiniteMath.abs
 
-This is equivalent to [math.abs](https://create.roblox.com/docs/reference/engine/libraries/math#abs). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.abs](https://create.roblox.com/docs/reference/engine/libraries/math#abs).
 
 ### InfiniteMath.ceil
 
-This is equivalent to [math.ceil](https://create.roblox.com/docs/reference/engine/libraries/math#ceil). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.ceil](https://create.roblox.com/docs/reference/engine/libraries/math#ceil).
 
 ### InfiniteMath.clamp
 
-This is equivalent to [math.clamp](https://create.roblox.com/docs/reference/engine/libraries/math#clamp). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.clamp](https://create.roblox.com/docs/reference/engine/libraries/math#clamp).
 
 ### InfiniteMath.min
 
-This is equivalent to [math.min](https://create.roblox.com/docs/reference/engine/libraries/math#min). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.min](https://create.roblox.com/docs/reference/engine/libraries/math#min).
 
 ### InfiniteMath.max
 
-This is equivalent to [math.max](https://create.roblox.com/docs/reference/engine/libraries/math#max). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.max](https://create.roblox.com/docs/reference/engine/libraries/math#max).
 
 ### InfiniteMath.sign
 
-This is equivalent to [math.sign](https://create.roblox.com/docs/reference/engine/libraries/math#sign). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.sign](https://create.roblox.com/docs/reference/engine/libraries/math#sign).
 
 ### InfiniteMath.sqrt
 
-This is equivalent to [math.sqrt](https://create.roblox.com/docs/reference/engine/libraries/math#sqrt). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.sqrt](https://create.roblox.com/docs/reference/engine/libraries/math#sqrt).
 
 ### InfiniteMath.fmod
 
-This is equivalent to [math.fmod](https://create.roblox.com/docs/reference/engine/libraries/math#fmod). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.fmod](https://create.roblox.com/docs/reference/engine/libraries/math#fmod).
 
 ### InfiniteMath.modf
 
-This is equivalent to [math.modf](https://create.roblox.com/docs/reference/engine/libraries/math#modf). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.modf](https://create.roblox.com/docs/reference/engine/libraries/math#modf).
 
 ### InfiniteMath.log
 
-This is equivalent to [math.log](https://create.roblox.com/docs/reference/engine/libraries/math#log). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.log](https://create.roblox.com/docs/reference/engine/libraries/math#log).
 
 ### InfiniteMath.log10
 
-This is equivalent to [math.log10](https://create.roblox.com/docs/reference/engine/libraries/math#log10). You can use numbers `1`, correctly formatted strings `"1,0"`, or constructed numbers `InfiniteMath.new(1)`.
+This is equivalent to [math.log10](https://create.roblox.com/docs/reference/engine/libraries/math#log10).
