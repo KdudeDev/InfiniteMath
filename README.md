@@ -9,7 +9,7 @@ InfiniteMath stores 2 numbers instead of 1 in a clever way to get around the lim
 
 InfiniteMath's limit is about:
 
-> -10^308^308 to 10^308^308
+> -10^^308 to 10^^308
 
 In simpler terms, Roblox's normal limit is 1 with 308 zeros. InfiniteMath's limit is 1 with 10^308 zeros.
 
