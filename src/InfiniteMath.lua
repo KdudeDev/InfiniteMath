@@ -13,7 +13,7 @@ local full_names = require(script.FullNames)
 ----- Private functions -----
 local function fixNumber(first, second)	
 	first = tonumber(first)
-	second = math.clamp(math.round(second), 0, 1e+999)
+	second = math.round(second)
 	
 	local sign = if first < 0 then -1 else 1
 	local x
