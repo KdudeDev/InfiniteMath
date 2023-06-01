@@ -450,14 +450,9 @@ function InfiniteMath.floor(Num)
 	Num *= sign
 	
 	local first, second = fixNumber(Num.first, Num.second)
-	local firstSplit = tostring(first):split(".")
+	if second >= 3 then return Num * sign end
 	
-	if firstSplit[2] ~= nil then
-		first = firstSplit[2]:sub(1, second)
-		first = firstSplit[1].."."..first
-	end
-	
-	return InfiniteMath.new({first, second}) * sign
+	return InfiniteMath.new(math.floor(Num:Reverse())) * sign
 end
 
 function InfiniteMath.round(Num)
@@ -466,28 +461,19 @@ function InfiniteMath.round(Num)
 	Num *= sign
 	
 	local first, second = fixNumber(Num.first, Num.second)
-	
-	if #tostring(first) <= second + 2 then return Num * sign end
-	local firstSplit = tostring(first):split(".")
+	if second >= 3 then return Num * sign end
+
+	local firstSplit = tostring(Num:Reverse()):split(".")
 
 	if firstSplit[2] ~= nil then
-		first = firstSplit[2]:sub(second + 1)
-		
-		if tonumber(firstSplit[2]) / 10^#first >= .5 then
-			return InfiniteMath.ceil(Num * sign)
+		if tonumber(firstSplit[2]) >= .5 then
+			return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
 		else
-			return InfiniteMath.floor(Num * sign)
+			return InfiniteMath.new(math.floor(Num:Reverse())) * sign
 		end
 	end
 
 	return Num * sign
-end
-
-function InfiniteMath.abs(Num)
-	Num = checkNumber(Num)
-	local first, second = fixNumber(Num.first, Num.second)
-	
-	return InfiniteMath.new({math.abs(first), second})
 end
 
 function InfiniteMath.ceil(Num)
@@ -496,28 +482,16 @@ function InfiniteMath.ceil(Num)
 	Num *= sign
 	
 	local first, second = fixNumber(Num.first, Num.second)
+	if second >= 3 then return Num * sign end
 
-	if #tostring(first) <= second + 2 then return InfiniteMath.new({first, second}) end
+	return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
+end
 
-	local firstSplit = tostring(first):split(".")
+function InfiniteMath.abs(Num)
+	Num = checkNumber(Num)
+	local first, second = fixNumber(Num.first, Num.second)
 
-	if firstSplit[2] ~= nil then
-		first = firstSplit[2]:sub(1, second)
-		first = if first ~= "" then firstSplit[1].."."..first else firstSplit[1]
-
-		if second > 0 then
-			if tonumber(first:sub(second + 2) + 1) < 10 then
-				first = replaceChar(second + 2, first, tonumber(first:sub(second + 2) + 1))
-			else
-				first = replaceChar(second + 2, first, 0)
-				first = replaceChar(second, first, tonumber(first:sub(second) + 1))
-			end
-		else
-			first = replaceChar(1, first, tonumber(first:sub(1, 1) + 1))
-		end
-	end
-
-	return InfiniteMath.new({first, second}) * sign
+	return InfiniteMath.new({math.abs(first), second})
 end
 
 function InfiniteMath.clamp(Num, Min, Max)
