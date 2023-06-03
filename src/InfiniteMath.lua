@@ -6,7 +6,7 @@ Number.__index = Number
 ----- Private variables -----
 local THRESHOLD = 16 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
 local DECIMALPOINTS = 2 -- How many decimal points are on a number. 1 is 1.1, 2 is 1.11, etc.
-local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 5 -- How accurate leaderboards are
+local LEADERBOARDPRECISION, LEADERBOARDPOINT = 10000, 5 -- How accurate leaderboards are
 
 local suffixes = require(script.Suffixes)
 local full_names = require(script.FullNames)
@@ -327,9 +327,17 @@ function Number:GetSuffix(abbreviation)
 	if abbreviation == nil then abbreviation = true end
 
 	local first, second = fixNumber(self.first, self.second)
-
+	
 	if second < 3 then 
-		return self:Reverse()
+		local result = tostring(self:Reverse())
+		
+		if DECIMALPOINTS > 0 then
+			result = result:sub(1, second + 2 + DECIMALPOINTS)
+		else
+			result = result:split(".")[1]
+		end
+		
+		return result
 	end
 
 	local secondRemainder = second % 3
@@ -427,7 +435,7 @@ function Number:ConvertForLeaderboards()
 
 	first = first:gsub("%.", "")
 
-	return math.floor(tonumber(second.."."..first:sub(1, DECIMALPOINT)) * LEADERBOARDPRECISION)
+	return math.floor(tonumber(second.."."..first:sub(1, LEADERBOARDPOINT)) * LEADERBOARDPRECISION)
 end
 
 function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
