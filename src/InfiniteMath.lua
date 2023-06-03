@@ -5,6 +5,7 @@ Number.__index = Number
 
 ----- Private variables -----
 local THRESHOLD = 16 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
+local DECIMALPOINTS = 2 -- How many decimal points are on a number. 1 is 1.1, 2 is 1.11, etc.
 local LEADERBOARDPRECISION, DECIMALPOINT = 10000, 5 -- How accurate leaderboards are
 
 local suffixes = require(script.Suffixes)
@@ -327,14 +328,15 @@ function Number:GetSuffix(abbreviation)
 
 	local first, second = fixNumber(self.first, self.second)
 
-	first = tonumber(first)
-	second = tonumber(second)
+	if second < 3 then 
+		return self:Reverse()
+	end
 
 	local secondRemainder = second % 3
 	first *= 10^secondRemainder
 
 	local suffixIndex = math.floor(second/3)
-	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
 	local suffix = if abbreviation then suffixes[suffixIndex] else (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
 
@@ -353,7 +355,7 @@ function Number:ScientificNotation(abbreviation, abbreviate)
 	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 	
-	local str = math.floor(first * 10)/10 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 	
 	if tonumber(second) > 1e+6 and abbreviate ~= false then
 		if abbreviation == true or abbreviation == nil then
@@ -376,7 +378,7 @@ function Number:LogarithmNotation()
 		local secondRemainder = second % 3
 		first *= 10^secondRemainder
 
-		return math.floor(first * 10)/10
+		return math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS
 	end
 
 	local log = tostring(math.log10(first))
@@ -413,7 +415,7 @@ function Number:aaNotation()
 		return self:ScientificNotation()
 	end
 	
-	local str = math.floor(first * 100)/100 -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 	local unit = Alphabet[firstUnit]..Alphabet[secondUnit]
 	
 	return str..unit
@@ -466,7 +468,7 @@ function InfiniteMath.round(Num)
 	local firstSplit = tostring(Num:Reverse()):split(".")
 
 	if firstSplit[2] ~= nil then
-		if tonumber(firstSplit[2]) >= .5 then
+		if tonumber(firstSplit[2]) >= 5 then
 			return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
 		else
 			return InfiniteMath.new(math.floor(Num:Reverse())) * sign
