@@ -22,4 +22,4 @@ jobs:
           git config --global user.name "github-actions-bot"
           moonwave build --publish --code src
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ secrets.TOKEN }}
