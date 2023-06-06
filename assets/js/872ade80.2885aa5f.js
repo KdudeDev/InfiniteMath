@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[853],{63891:e=>{e.exports=JSON.parse('{"sourceUrl":"https://github.com/KdudeDev/InfiniteMath/blob/main","baseUrl":"/infinitemath/","classOrder":[],"apiCategories":[]}')}}]);
