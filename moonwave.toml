@@ -7,7 +7,7 @@ changelog = true
 
 [docusaurus]
 url = "https://KdudeDev.github.io/"
-baseUrl = "/infinitemath/"  
+baseUrl = "/InfiniteMath/"  
 tagline = "InfiniteMath allows you to have practically infinite numbers."
 favicon = "/favicon.png"
 
