@@ -1,17 +1,35 @@
-local InfiniteMath = {}
-local Number = {}
 
+--[=[
+	@class InfiniteMath
+
+	InfiniteMath module that creates numbers that surpass the limits of -10^308 to 10^308
+
+	InfiniteMath has all the same functions as the math library.
+]=]
+
+--[=[
+	An InfiniteMath number that surpasses the limits of -10^308 to 10^308
+
+	@class Number
+
+]=]
+
+local InfiniteMath = {}
+
+local Number = {}
 Number.__index = Number
 
------ Private variables -----
-local THRESHOLD = 16 -- How accurate math is, max is 16 (16 is how many decimal places you can have on a number)
-local DECIMALPOINTS = 2 -- How many decimal points are on a number. 1 is 1.1, 2 is 1.11, etc.
-local LEADERBOARDPRECISION, LEADERBOARDPOINT = 10000, 5 -- How accurate leaderboards are
+--[[ Private variables ]]--
+
+
+local THRESHOLD = 16
+local DECIMALPOINTS = 2
+local LEADERBOARDPRECISION, LEADERBOARDPOINT = 10000, 5
 
 local suffixes = require(script.Suffixes)
 local full_names = require(script.FullNames)
 
------ Private functions -----
+--[[ Private functions ]]--
 local function fixNumber(first, second)	
 	first = tonumber(first)
 	second = math.round(second)
@@ -285,7 +303,29 @@ function Number.__tostring(self)
 	return self:GetSuffix(true)
 end
 
----- Class methods -----
+--[[ Class methods ]]--
+
+--[=[
+	@within InfiniteMath
+
+	Returns a new InfiniteMath constructed number
+
+	You can use numbers 1, correctly formatted strings "1,0", tables {1, 0}, and other constructed numbers InfiniteMath.new(1).
+
+	```lua
+		print(InfiniteMath.new(1)) -- 1
+	```
+
+	To create a number above 1e+308, we can use strings or tables.
+
+	```lua
+		print(InfiniteMath.new("1,1000")) -- 10DTL
+		print(InfiniteMath.new({1, 1000})) -- 10DTL
+	```
+
+	@param val number | string | table
+	@return Number
+]=]
 function InfiniteMath.new(val)	
 	local first, second
 	
@@ -313,9 +353,35 @@ function InfiniteMath.new(val)
 	}, Number)
 end
 
+--[=[
+	@within Number
+
+	Returns the amount of zeroes in the number
+
+	```lua
+		print(InfiniteMath.new(1000):GetZeros()) -- 3
+	```
+
+	@method GetZeroes
+	@return number
+]=]
+
 function Number:GetZeroes()
 	return self.second
 end
+
+--[=[
+	@within Number
+
+	Reverse will attempt to return the constructed number converted into a regular number. If the constructed number is above 1e+308 it will instead return INF.
+
+	```lua
+		print(InfiniteMath.new("1, 3"):Reverse()) -- 1000
+	```
+
+	@method Reverse
+	@return number
+]=]
 
 function Number:Reverse()
 	local first, second = fixNumber(self.first, self.second)
@@ -323,8 +389,28 @@ function Number:Reverse()
 	return tonumber(first.."e+"..second)
 end
 
+--[=[
+	@within Number
+
+	Returns a string with the number and a suffix at the end, these suffixes will go up to 1e+12000. After, it will default to returning scientific notation.
+
+	By default, it will return an abbreviated suffix (1K). Using true will use the default behavior. Using false will return the full suffix (1 Thousand).
+
+	```lua
+		print(InfiniteMath.new(1000):GetSuffix()) -- 1K
+		print(InfiniteMath.new(1000):GetSuffix(true)) -- 1K
+		print(InfiniteMath.new(1000):GetSuffix(false)) -- 1 Thousand
+	```
+
+	@method GetSuffix
+	@param abbreviation boolean | nil
+	@return string
+]=]
+
 function Number:GetSuffix(abbreviation)
-	if abbreviation == nil then abbreviation = true end
+	if abbreviation == nil then 
+		abbreviation = true 
+	end
 
 	local first, second = fixNumber(self.first, self.second)
 	
@@ -358,6 +444,14 @@ function Number:GetSuffix(abbreviation)
 
 	return str
 end
+
+--[=[
+	@within Number
+
+	@param abbreviation boolean | nil
+	@param abbreviate boolean | nil
+	@return string
+]=]
 
 function Number:ScientificNotation(abbreviation, abbreviate)
 	local first, second = fixNumber(self.first, self.second)
@@ -452,8 +546,16 @@ function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 	return InfiniteMath.new({first, second})
 end
 
----- Math methods -----
+--[[ Math methods ]]--
 
+--[=[
+	@within InfiniteMath
+
+	Rounds a number down to the nearest integer
+
+	@param Num number | string | Number
+	@return Number
+]=]
 function InfiniteMath.floor(Num)
 	Num = checkNumber(Num)
 	local sign = InfiniteMath.sign(Num)
@@ -465,12 +567,21 @@ function InfiniteMath.floor(Num)
 	return InfiniteMath.new(math.floor(Num:Reverse())) * sign
 end
 
+--[=[
+	@within InfiniteMath
+
+	Rounds a number to the nearest integer
+
+	@param Num number | string | Number
+	@return Number
+]=]
+
 function InfiniteMath.round(Num)
 	Num = checkNumber(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 	
-	local first, second = fixNumber(Num.first, Num.second)
+	local _first, second = fixNumber(Num.first, Num.second)
 	if second >= 3 then return Num * sign end
 
 	local firstSplit = tostring(Num:Reverse()):split(".")
@@ -486,6 +597,15 @@ function InfiniteMath.round(Num)
 	return Num * sign
 end
 
+--[=[
+	@within InfiniteMath
+
+	Rounds a number up to the nearest integer
+
+	@param Num number | string | Number
+	@return Number
+]=]
+
 function InfiniteMath.ceil(Num)
 	Num = checkNumber(Num)
 	local sign = InfiniteMath.sign(Num)
@@ -497,12 +617,32 @@ function InfiniteMath.ceil(Num)
 	return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
 end
 
+--[=[
+	@within InfiniteMath
+
+	Returns the absolute value (distance from 0)
+
+	@param Num number | string | Number
+	@return Number
+]=]
+
 function InfiniteMath.abs(Num)
 	Num = checkNumber(Num)
 	local first, second = fixNumber(Num.first, Num.second)
 
 	return InfiniteMath.new({math.abs(first), second})
 end
+
+--[=[
+	@within InfiniteMath
+
+	Clamps a number between a minimum and maximum value
+
+	@param Num number | string | Number
+	@param Min number | string | Number
+	@param Max number | string | Number
+	@return Number
+]=]
 
 function InfiniteMath.clamp(Num, Min, Max)
 	Num = checkNumber(Num)
@@ -532,6 +672,15 @@ function InfiniteMath.clamp(Num, Min, Max)
 	return Num
 end
 
+--[=[
+	@within InfiniteMath
+
+	Returns the smallest number among the given arguments 
+
+	@param ... number | string | Number
+	@return Number
+]=]
+
 function InfiniteMath.min(...)
 	local Numbers = {...}
 	if Numbers[1] == nil then
@@ -552,6 +701,15 @@ function InfiniteMath.min(...)
 	
 	return Min
 end
+
+--[=[
+	@within InfiniteMath
+
+	Returns the largest number among the given arguments
+
+	@param ... number | string | Number
+	@return Number
+]=]
 
 function InfiniteMath.max(...)
 	local Numbers = {...}
@@ -574,6 +732,15 @@ function InfiniteMath.max(...)
 	return Max
 end
 
+--[=[
+	@within InfiniteMath
+
+	Returns the -1 if n < 0, if n == 0, or 1 if n > 0
+
+	@param Num number | string | Number
+	@return number
+]=]
+
 function InfiniteMath.sign(Num)
 	Num = checkNumber(Num)
 	local first, _ = fixNumber(Num.first, Num.second)
@@ -582,9 +749,28 @@ function InfiniteMath.sign(Num)
 	return if first > 0 then 1 elseif first < 0 then -1 else 0
 end
 
+--[=[
+	@within InfiniteMath
+
+	Returns the square root of a number
+
+	@param Num number | string | Number
+	@return Number
+]=]
+
 function InfiniteMath.sqrt(Num)
 	return Num^.5
 end
+
+--[=[
+	@within InfiniteMath
+
+	Returns the remainder of the division of a by b that rounds the quotient towards zero.
+
+	@param a number | string | Number
+	@param b number | string | Number
+	@return Number
+]=]
 
 function InfiniteMath.fmod(a, b)
 	a, b = checkNumber(a), checkNumber(b)
@@ -594,6 +780,15 @@ function InfiniteMath.fmod(a, b)
 	
 	return a - nextNum
 end
+
+--[=[
+	@within InfiniteMath
+
+	Returns both the integral part of n and the fractional part (if there is one). 
+
+	@param Num number | string | Number
+	@return Number
+]=]
 
 function InfiniteMath.modf(Num)
 	Num = checkNumber(Num)
@@ -622,14 +817,33 @@ function InfiniteMath.modf(Num)
 	return Num
 end
 
+--[=[
+	@within InfiniteMath
+
+	@param Num number | string | Number
+	@param Base number
+	@return Number
+]=]
+
 function InfiniteMath.log(Num, Base)
-	if Base == nil then Base = 2.7182818 end
+	if Base == nil then 
+		Base = 2.7182818 
+	end
 	
 	Num = checkNumber(Num)
 	local first, second = fixNumber(Num.first, Num.second)
 	
-	return math.log(first, Base) + math.log(10^second, Base)
+	return InfiniteMath.new(math.log(first, Base) + math.log(10^second, Base))
 end
+
+--[=[
+	@within InfiniteMath
+
+	Returns the base-10 logarithm of x.
+
+	@param Num number | string | Number
+	@return Number
+]=]
 
 function InfiniteMath.log10(Num)
 	return InfiniteMath.log(Num, 10)
