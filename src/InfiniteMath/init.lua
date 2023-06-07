@@ -457,6 +457,7 @@ end
 --[=[
 	@within Number
 
+	@method LogarithmNotation
 	@param abbreviation boolean | nil
 	@param abbreviate boolean | nil
 	@return string
@@ -478,6 +479,15 @@ function Number:ScientificNotation(abbreviation, abbreviate)
 
 	return str.."e+"..second
 end
+
+--[=[
+	@within Number
+
+	LogarithmNotation will return a string with the number formatted in logarithmic notation.
+
+	@method LogarithmNotation
+	@return string
+]=]
 
 function Number:LogarithmNotation()
 	local first, second = fixNumber(self.first, self.second)
@@ -504,6 +514,14 @@ end
 
 local Alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
+--[=[
+	@within Number
+
+	aaNotation will return a string with the number formatted in double letter notation.
+
+	@method aaNotation
+	@return string
+]=]
 function Number:aaNotation()
 	local first, second = fixNumber(self.first, self.second)
 	
@@ -532,6 +550,16 @@ function Number:aaNotation()
 	return str..unit
 end
 
+--[=[
+	@within Number
+
+	ConvertForLeaderboards will return a number that you can use for OrderedDataStores in order to create global leaderboards that have the same limit as InfiniteMath.
+
+	@method ConvertForLeaderboards
+	@return number
+
+]=]
+
 function Number:ConvertForLeaderboards()
 	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
@@ -541,6 +569,16 @@ function Number:ConvertForLeaderboards()
 	return math.floor(tonumber(second.."."..first:sub(1, LEADERBOARDPOINT)) * LEADERBOARDPRECISION)
 end
 
+--[=[
+	@within InfiniteMath
+
+	ConvertFromLeaderboards will return a constructed number, and should be given a number created by Number:ConvertForLeaderboards. This is what you will display on global leaderboards using OrderedDataStores.
+
+	@method ConvertFromLeaderboards
+	@param GivenNumber number
+	@return Number
+
+]=]
 function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 	GivenNumber /= LEADERBOARDPRECISION
 
