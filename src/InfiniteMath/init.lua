@@ -14,7 +14,16 @@
 
 ]=]
 
-local InfiniteMath = {}
+--[=[
+	@prop DECIMALPOINTS number
+	@within InfiniteMath
+
+	How many decimal points are on a number. 1 is 1.1, 2 is 1.11, etc.
+]=]
+
+local InfiniteMath = {
+	DECIMALPOINTS = 2,
+}
 
 local Number = {}
 Number.__index = Number
@@ -23,11 +32,11 @@ Number.__index = Number
 
 
 local THRESHOLD = 16
-local DECIMALPOINTS = 2
 local LEADERBOARDPRECISION, LEADERBOARDPOINT = 10000, 5
 
-local suffixes = require(script.Suffixes)
-local full_names = require(script.FullNames)
+local values = script.Values
+local suffixes = require(values.Suffixes)
+local full_names = require(values.FullNames)
 
 --[[ Private functions ]]--
 local function fixNumber(first, second)	
@@ -417,8 +426,8 @@ function Number:GetSuffix(abbreviation)
 	if second < 3 then 
 		local result = tostring(self:Reverse())
 		
-		if DECIMALPOINTS > 0 then
-			result = result:sub(1, second + 2 + DECIMALPOINTS)
+		if InfiniteMath.DECIMALPOINTS > 0 then
+			result = result:sub(1, second + 2 + InfiniteMath.DECIMALPOINTS)
 		else
 			result = result:split(".")[1]
 		end
@@ -430,7 +439,7 @@ function Number:GetSuffix(abbreviation)
 	first *= 10^secondRemainder
 
 	local suffixIndex = math.floor(second/3)
-	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
 	local suffix = if abbreviation then suffixes[suffixIndex] else (full_names[suffixIndex] and " " .. full_names[suffixIndex] or nil)
 
@@ -457,7 +466,7 @@ function Number:ScientificNotation(abbreviation, abbreviate)
 	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 	
-	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 	
 	if tonumber(second) > 1e+6 and abbreviate ~= false then
 		if abbreviation == true or abbreviation == nil then
@@ -480,7 +489,7 @@ function Number:LogarithmNotation()
 		local secondRemainder = second % 3
 		first *= 10^secondRemainder
 
-		return math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS
+		return math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS
 	end
 
 	local log = tostring(math.log10(first))
@@ -517,7 +526,7 @@ function Number:aaNotation()
 		return self:ScientificNotation()
 	end
 	
-	local str = math.floor(first * 10^DECIMALPOINTS)/10^DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
+	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 	local unit = Alphabet[firstUnit]..Alphabet[secondUnit]
 	
 	return str..unit
