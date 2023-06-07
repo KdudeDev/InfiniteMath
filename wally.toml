@@ -8,4 +8,4 @@ registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
 exclude = ["*.toml", "docs", ".moonwave", "sourcemap.json", "README.md"]
-include = ["src/InfiniteMath"]
+include = ["src/InfiniteMath", "wally.toml"]
