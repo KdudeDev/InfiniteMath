@@ -1,0 +1,11 @@
+[package]
+name = "kdudedev/infinite-math"
+description = "A module that allows you to have practically infinite numbers"
+version = "1.2.3"
+license = "MIT"
+authors = ["KdudeDev", "noahrepublic", "foshesss", "iSophes"]
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+exclude = ["*.toml", "docs", ".moonwave", "sourcemap.json", "README.md"]
+include = ["src/InfiniteMath"]
