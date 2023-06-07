@@ -10,3 +10,7 @@ If you use InfiniteMath in your game, send it to me on Discord `Kdude#1774` and 
 
 ## Roblox Studio Plugin
 Download the Roblox Plugin [here!](https://www.roblox.com/library/12473700145/InfiniteMath)
+
+## Wally
+
+Download the module through wally by adding [this](https://wally.run/package/kdudedev/infinite-math?version=1.2.3) package!
