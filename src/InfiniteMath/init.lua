@@ -40,9 +40,14 @@ local full_names = require(values.FullNames)
 --[[ Private functions ]]--
 local function fixNumber(first, second)	
 	first = tonumber(first)
-	second = math.round(second)
+	
+	if second % 1 > 0 then
+		first *= 10^(second % 1)
+	end
+	
+	second = math.floor(second)
 
-	local sign = if first < 0 then -1 else 1
+	local sign = math.sign(first)
 	local x
 
 	if first == 0 or (second == 0 and first < 1) then
@@ -131,14 +136,8 @@ local function checkNumber(a)
 		error('"'..typeof(a)..'" is not a valid type. Please only use "number", "string", or constructed numbers.')
 	end
 
-	if typeof(a) == 'number' then
-		a = InfiniteMath.new(a)
-	end
-
-	if typeof(a) == 'string' then
-		a = InfiniteMath.new(a)
-	end
-
+	a = InfiniteMath.new(a)
+	
 	if a.first == nil and a.second == nil then
 		error('"string" is not correctly formatted. Correctly formatted strings look like "1,0".')
 	end
@@ -218,8 +217,6 @@ end
 function Number.__pow(a, power)
 	a = checkNumber(a)
 
-	local first, second = fixNumber(a.first, a.second)
-
 	if typeof(power) ~= "number" then
 		power = power:Reverse()
 	end
@@ -227,32 +224,44 @@ function Number.__pow(a, power)
 	if power == math.huge or power ~= power or typeof(power) ~= "number" then
 		error(power.." is not a valid power.")
 	end
-
-	local answer = InfiniteMath.new(1)
-
-	local firstAnswer, secondAnswer
-
-	if power > 0 then
-		while power > 0 do
-			local lastBit = (bit32.band(power, 1) == 1)
-
-			if lastBit then
-				answer *= a
-			end
-
-			a *= a
-
-			power = bit32.rshift(power, 1)
+	
+	local sign = InfiniteMath.sign(a)
+	a *= sign
+	
+	local first, second = fixNumber(a.first, a.second)
+	
+	if first^power == math.huge or second * power == math.huge then
+		if typeof(power) ~= "number" then
+			power = power:Reverse()
 		end
 
-		firstAnswer, secondAnswer = fixNumber(answer.first, answer.second)
-	elseif power == 0 then
-		firstAnswer, secondAnswer = 1, 0
+		local answer = InfiniteMath.new(1)
+
+		local firstAnswer, secondAnswer
+
+		if power > 1 then
+			while power > 0 do
+				local lastBit = (bit32.band(power, 1) == 1)
+
+				if lastBit then
+					answer *= a
+				end
+
+				a *= a
+
+				power = bit32.rshift(power, 1)
+			end
+
+			firstAnswer, secondAnswer = fixNumber(answer.first, answer.second)
+		elseif power == 0 then
+			firstAnswer, secondAnswer = 1, 0
+		else
+			firstAnswer, secondAnswer = first, second
+		end
+		return InfiniteMath.new({firstAnswer, secondAnswer})
 	else
-		firstAnswer, secondAnswer = first, second
+		return InfiniteMath.new({first^power, second*power}) * sign
 	end
-	
-	return InfiniteMath.new({firstAnswer, secondAnswer})
 end
 
 function Number.__mod(a, b)
@@ -316,6 +325,10 @@ function Number.__tostring(self)
 	return self:GetSuffix(true)
 end
 
+function Number.__concat(self, value)
+	return tostring(self)..value
+end
+
 --[[ Class methods ]]--
 
 --[=[
@@ -336,7 +349,7 @@ end
 		print(InfiniteMath.new({1, 1000})) -- 10DTL
 	```
 
-	@param val number | string | table
+	@param val number | string | table | Number
 	@return Number
 ]=]
 
@@ -345,6 +358,9 @@ function InfiniteMath.new(val)
 
 	if typeof(val) == "table" then
 		if val.first ~= nil and val.second ~= nil then return val end
+		if typeof(val[1]) ~= "number" or typeof(val[2]) ~= "number" then
+			error("Both arguments of table must be numbers.")
+		end
 
 		first = val[1]
 		second = val[2]
@@ -459,23 +475,25 @@ end
 		print(InfiniteMath.new("1, 1e+6"):ScientificNotation(false)) -- 1e+1e+6
 	```
 
-	You can also use nil twice to stop the functionality and instead just display `1e+1000000`.
+	You can also use nil and false to stop the functionality and instead just display `1e+1000000`.
 	
 	```lua
-		print(InfiniteMath.new("1, 1e+6"):ScientificNotation(nil, nil)) -- 1e+1000000
+		print(InfiniteMath.new("1, 1e+6"):ScientificNotation(nil, false)) -- 1e+1000000
 	```
 
-	@method LogarithmNotation
+	@method ScientificNotation
+	@param abbreviation boolean | nil
+	@param secondAbbreviation boolean | nil
 	@return string
 ]=]
 
-function Number:ScientificNotation(abbreviation, abbreviate)
+function Number:ScientificNotation(abbreviation, secondAbbreviation)
 	local first, second = fixNumber(self.first, self.second)
 	first, second = tostring(first), tostring(second)
 
 	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
 
-	if tonumber(second) > 1e+6 and abbreviate ~= false then
+	if tonumber(second) > 1e+6 and secondAbbreviation ~= false then
 		if abbreviation == true or abbreviation == nil then
 			second = InfiniteMath.new(tonumber(second)):GetSuffix(true)
 		else
@@ -613,7 +631,7 @@ function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
 
 	first = firstFirst.."."..firstSecond
 
-	return InfiniteMath.new({first, second})
+	return InfiniteMath.new({tonumber(first), tonumber(second)})
 end
 
 --[[ Math methods ]]--
@@ -623,7 +641,7 @@ end
 
 	Rounds a number down to the nearest integer
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -643,7 +661,7 @@ end
 
 	Rounds a number to the nearest integer
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -673,7 +691,7 @@ end
 
 	Rounds a number up to the nearest integer
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -693,7 +711,7 @@ end
 
 	Returns the absolute value (distance from 0)
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -709,9 +727,9 @@ end
 
 	Clamps a number between a minimum and maximum value
 
-	@param Num number | string | Number
-	@param Min number | string | Number
-	@param Max number | string | Number
+	@param Num number | string | table | Number
+	@param Min number | string | table | Number
+	@param Max number | string | table | Number
 	@return Number
 ]=]
 
@@ -736,8 +754,6 @@ function InfiniteMath.clamp(Num, Min, Max)
 		Max = InfiniteMath.new("1, 1e+308")
 	end
 
-	print(Num < Min, Num, Min)
-
 	Num = if Num < Min then Min elseif Num > Max then Max else Num
 
 	return Num
@@ -748,7 +764,7 @@ end
 
 	Returns the smallest number among the given arguments 
 
-	@param ... number | string | Number
+	@param ... number | string | table | Number
 	@return Number
 ]=]
 
@@ -778,7 +794,7 @@ end
 
 	Returns the largest number among the given arguments
 
-	@param ... number | string | Number
+	@param ... number | string | table | Number
 	@return Number
 ]=]
 
@@ -808,7 +824,7 @@ end
 
 	Returns the sign of the number. Negative numbers return -1, positive numbers return 1, 0 returns 0.
 	
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return number
 ]=]
 
@@ -825,7 +841,7 @@ end
 
 	Returns the square root of a number
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -838,8 +854,8 @@ end
 
 	Returns the remainder of the division of a by b that rounds the quotient towards zero.
 
-	@param a number | string | Number
-	@param b number | string | Number
+	@param a number | string | table | Number
+	@param b number | string | table | Number
 	@return Number
 ]=]
 
@@ -857,7 +873,7 @@ end
 
 	Returns both the integral part of n and the fractional part (if there is one). 
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
@@ -893,20 +909,25 @@ end
 	
 	Returns the logarithm of x with the given base. Default base is constant e (2.7182818)
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@param Base number
 	@return Number
 ]=]
 
 function InfiniteMath.log(Num, Base)
+	Num = checkNumber(Num)
+	
+	if InfiniteMath.sign(Num) == -1 then 
+		return 0/0  -- log of a negative number is always nan
+	end
+	
 	if Base == nil then 
 		Base = 2.7182818 
 	end
 
-	Num = checkNumber(Num)
 	local first, second = fixNumber(Num.first, Num.second)
 
-	return InfiniteMath.new(math.log(first, Base) + math.log(10^second, Base))
+	return InfiniteMath.new(math.log(first, Base) + second * math.log(10, Base))
 end
 
 --[=[
@@ -914,7 +935,7 @@ end
 
 	Returns the base-10 logarithm of x.
 
-	@param Num number | string | Number
+	@param Num number | string | table | Number
 	@return Number
 ]=]
 
