@@ -19,5 +19,4 @@ jobs:
         env:
           WALLY_AUTH: ${{ secrets.WALLY_AUTH }}
         run: |
-            wally login --token "$WALLY_AUTH"
-            wally publish
+            wally publish --token "$WALLY_AUTH"
