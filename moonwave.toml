@@ -8,7 +8,7 @@ changelog = true
 [docusaurus]
 url = "https://KdudeDev.github.io/"
 baseUrl = "/InfiniteMath/"  
-tagline = "InfiniteMath allows you to have practically infinite numbers."
+tagline = "InfiniteMath allows you to surpass the 10^308 limit."
 favicon = "/favicon.png"
 
 [navbar]
