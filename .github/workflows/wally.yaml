@@ -17,5 +17,5 @@ jobs:
       - name: Publish release to Wally
         shell: bash
         run: |
-            wally login --token "$ {{ secrets.WALLY_AUTH }}"
+            wally login --token "${{ secrets.WALLY_AUTH }}"
             wally publish
