@@ -9,4 +9,4 @@ Get the Roblox Model [here!](https://www.roblox.com/library/12473700145/Infinite
 
 ## Wally
 
-Download the module through Wally by adding [this](https://wally.run/package/kdudedev/infinite-math?version=1.2.3) package!
+Download the module through Wally by adding [this](https://wally.run/package/kdudedev/infinite-math) package!
