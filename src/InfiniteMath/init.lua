@@ -145,10 +145,6 @@ local function checkNumber(a)
 	return a
 end
 
-function replaceChar(pos, str, r)
-	return table.concat{str:sub(1,pos-1), r, str:sub(pos+1)}
-end
-
 -- math metamethods:
 function Number.__add(a, b)
 	a, b = checkNumber(a), checkNumber(b)
@@ -650,7 +646,7 @@ function InfiniteMath.floor(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 
-	local first, second = fixNumber(Num.first, Num.second)
+	local _first, second = fixNumber(Num.first, Num.second)
 	if second >= 3 then return Num * sign end
 
 	return InfiniteMath.new(math.floor(Num:Reverse())) * sign
@@ -700,7 +696,7 @@ function InfiniteMath.ceil(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 
-	local first, second = fixNumber(Num.first, Num.second)
+	local _first, second = fixNumber(Num.first, Num.second)
 	if second >= 3 then return Num * sign end
 
 	return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
