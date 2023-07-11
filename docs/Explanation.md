@@ -35,9 +35,9 @@ Now if we were to convert that to InfiniteMath, it would look like:
 
 > {1, 0}
 
-To explain, we can construct a table out of a number by taking the coefficient and the exponent, and splitting them up into a string.
+To explain, we can construct a table out of a number by taking the coefficient and the exponent of a number.
 
-Lets say we want to use `1000` with the module, we take the coefficient (1) and the exponent, which the amount of zeros (3) and put them in a string:
+Lets say we want to use `1000` with the module, we take the coefficient (1) and the exponent, which the amount of zeros (3) and put them in a table:
 
 > {1, 3}
 
