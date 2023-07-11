@@ -35,7 +35,7 @@ Now if we were to convert that to InfiniteMath, it would look like:
 
 > {1, 0}
 
-To explain, we can construct a string out of a number by taking the coefficient and the exponent, and splitting them up into a string.
+To explain, we can construct a table out of a number by taking the coefficient and the exponent, and splitting them up into a string.
 
 Lets say we want to use `1000` with the module, we take the coefficient (1) and the exponent, which the amount of zeros (3) and put them in a string:
 
@@ -43,9 +43,9 @@ Lets say we want to use `1000` with the module, we take the coefficient (1) and 
 
 Now if we did something like `{1, 3} + {1, 2}`, we would get:
 
-> {1.1, 3} (1100)
+> {1.1, 3}
 
-And since we're not using numbers, we can go above the limit. For example, `"1, 1000"` is equal to 1 with 1000 zeros, or 1 Untrigintatrecentillion. We can continue all the way up until reaching `1e+308` zeros, which would look like:
+This gives us `1100`. And since we're not using numbers, we can go above the limit. For example, `{1, 1000}` is equal to 1 with 1000 zeros, or 1 Untrigintatrecentillion. We can continue all the way up until reaching `1e+308` zeros, which would look like:
 
 > {1, 1e+308}
 
