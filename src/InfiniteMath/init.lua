@@ -40,11 +40,11 @@ local full_names = require(values.FullNames)
 --[[ Private functions ]]--
 local function fixNumber(first, second)	
 	first = tonumber(first)
-	
+
 	if second % 1 > 0 then
 		first *= 10^(second % 1)
 	end
-	
+
 	second = math.floor(second)
 
 	local sign = math.sign(first)
@@ -90,6 +90,9 @@ local function convert(number)
 	if typeof(number) ~= "number" then
 		error('Type is not "number".')
 	end
+	
+	local sign = math.sign(number)
+	number = math.abs(number)
 
 	-- get string representation
 	local numberStr = tostring(number)
@@ -127,8 +130,8 @@ local function convert(number)
 			end
 		end
 	end
-
-	return first, second
+	
+	return first * sign, second
 end
 
 local function checkNumber(a)
@@ -137,7 +140,7 @@ local function checkNumber(a)
 	end
 
 	a = InfiniteMath.new(a)
-	
+
 	if a.first == nil and a.second == nil then
 		error('"string" is not correctly formatted. Correctly formatted strings look like "1,0".')
 	end
@@ -220,12 +223,12 @@ function Number.__pow(a, power)
 	if power == math.huge or power ~= power or typeof(power) ~= "number" then
 		error(power.." is not a valid power.")
 	end
-	
+
 	local sign = InfiniteMath.sign(a)
 	a *= sign
-	
+
 	local first, second = fixNumber(a.first, a.second)
-	
+
 	if first^power == math.huge or second * power == math.huge then
 		if typeof(power) ~= "number" then
 			power = power:Reverse()
@@ -280,8 +283,8 @@ end
 function Number.__eq(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 
-	if tostring(a.first) == "nan" or tostring(b.first) == "nan" then 
-		return false 
+	if a.first == "nan" or b.first == "nan" then --(nan == nan) is false, so return false
+		return false
 	end
 
 	return a.first == b.first and a.second == b.second
@@ -643,13 +646,11 @@ end
 
 function InfiniteMath.floor(Num)
 	Num = checkNumber(Num)
-	local sign = InfiniteMath.sign(Num)
-	Num *= sign
 
 	local _first, second = fixNumber(Num.first, Num.second)
-	if second >= 3 then return Num * sign end
+	if second >= 300 then return Num end -- Rounding after 1e+300 would be pointless, so don't do it.
 
-	return InfiniteMath.new(math.floor(Num:Reverse())) * sign
+	return InfiniteMath.new(math.floor(Num:Reverse()))
 end
 
 --[=[
@@ -667,7 +668,7 @@ function InfiniteMath.round(Num)
 	Num *= sign
 
 	local _first, second = fixNumber(Num.first, Num.second)
-	if second >= 3 then return Num * sign end
+	if second >= 300 then return Num * sign end -- Rounding after 1e+300 would be pointless, so don't do it.
 
 	local firstSplit = tostring(Num:Reverse()):split(".")
 
@@ -693,13 +694,11 @@ end
 
 function InfiniteMath.ceil(Num)
 	Num = checkNumber(Num)
-	local sign = InfiniteMath.sign(Num)
-	Num *= sign
-
+	
 	local _first, second = fixNumber(Num.first, Num.second)
-	if second >= 3 then return Num * sign end
+	if second >= 300 then return Num end -- Rounding after 1e+300 would be pointless, so don't do it.
 
-	return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
+	return InfiniteMath.new(math.ceil(Num:Reverse()))
 end
 
 --[=[
@@ -912,11 +911,11 @@ end
 
 function InfiniteMath.log(Num, Base)
 	Num = checkNumber(Num)
-	
+
 	if InfiniteMath.sign(Num) == -1 then 
 		return 0/0  -- log of a negative number is always nan
 	end
-	
+
 	if Base == nil then 
 		Base = 2.7182818 
 	end
