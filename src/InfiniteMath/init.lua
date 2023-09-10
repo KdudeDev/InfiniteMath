@@ -667,13 +667,13 @@ function InfiniteMath.round(Num)
 	local sign = InfiniteMath.sign(Num)
 	Num *= sign
 
-	local _first, second = fixNumber(Num.first, Num.second)
+	local first, second = fixNumber(Num.first, Num.second)
 	if second >= 300 then return Num * sign end -- Rounding after 1e+300 would be pointless, so don't do it.
 
-	local firstSplit = tostring(Num:Reverse()):split(".")
+	local firstSplit = math.abs(first) % 1
 
-	if firstSplit[2] ~= nil then
-		if tonumber(firstSplit[2]) >= 5 then
+	if firstSplit ~= 0 then
+		if firstSplit >= .5 then
 			return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
 		else
 			return InfiniteMath.new(math.floor(Num:Reverse())) * sign
