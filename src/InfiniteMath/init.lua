@@ -398,7 +398,7 @@ end
 function Number:Reverse()
 	local first, second = fixNumber(self.first, self.second)
 
-	return tonumber(first.."e+"..second)
+	return first * 10^second
 end
 
 --[=[
