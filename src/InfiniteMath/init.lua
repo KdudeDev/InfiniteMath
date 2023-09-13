@@ -1,3 +1,5 @@
+--!native
+
 --[=[
 	@class InfiniteMath
 
