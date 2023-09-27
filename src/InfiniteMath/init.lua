@@ -145,7 +145,34 @@ local function checkNumber(a)
 	return a
 end
 
-function replaceChar(pos, str, r)
+local function validateConstructorNumber(val)
+	local first, second
+
+	if typeof(val) == "table" then
+		if val.first ~= nil and val.second ~= nil then return val end
+		if typeof(val[1]) ~= "number" or typeof(val[2]) ~= "number" then
+			error("Both arguments of table must be numbers.")
+		end
+
+		first = val[1]
+		second = val[2]
+	elseif typeof(val) == "string" then
+		first, second = fixNumber(table.unpack(val:split(',')))
+	elseif typeof(val) == 'number' then
+		if val == 1e+999 then
+			error('INF number is not allowed. Please use "string" or "table" instead of "number" to go above INF.')
+		end
+
+		first, second = convert(val)
+	else
+		error('"'..typeof(val)..'" is not a valid type. Please only use "number", "string", "table", or constructed numbers.')
+		return nil
+	end
+
+	return first, second
+end
+
+function _replaceChar(pos, str, r)
 	return table.concat{str:sub(1,pos-1), r, str:sub(pos+1)}
 end
 
@@ -354,33 +381,29 @@ end
 ]=]
 
 function InfiniteMath.new(val)	
-	local first, second
+	local first, second = validateConstructorNumber(val)
 
-	if typeof(val) == "table" then
-		if val.first ~= nil and val.second ~= nil then return val end
-		if typeof(val[1]) ~= "number" or typeof(val[2]) ~= "number" then
-			error("Both arguments of table must be numbers.")
-		end
-
-		first = val[1]
-		second = val[2]
-	elseif typeof(val) == "string" then
-		first, second = fixNumber(table.unpack(val:split(',')))
-	elseif typeof(val) == 'number' then
-		if val == 1e+999 then
-			error('INF number is not allowed. Please use "string" or "table" instead of "number" to go above INF.')
-		end
-
-		first, second = convert(val)
-	else
-		error('"'..typeof(val)..'" is not a valid type. Please only use "number", "string", "table", or constructed numbers.')
-		return
+	if not first or not second then
+		return -- errors in function already
 	end
 
 	return setmetatable({
 		first = first,
 		second = second
 	}, Number)
+end
+
+function InfiniteMath:Set(val)
+	local first, second = validateConstructorNumber(val)
+
+	if not first or not second then
+		return
+	end
+
+	self.first = first
+	self.second = second
+
+	return self
 end
 
 --[=[
