@@ -393,7 +393,13 @@ function InfiniteMath.new(val)
 	}, Number)
 end
 
-function InfiniteMath:Set(val)
+--[=[
+	@within Number
+
+	Sets the number value versus creating a new number.
+]=]
+
+function Number:Set(val)
 	local first, second = validateConstructorNumber(val)
 
 	if not first or not second then
