@@ -442,7 +442,7 @@ function Number:GetSuffix(abbreviation)
 		if first >= 1 then
 			if InfiniteMath.DECIMALPOINTS > 0 then
 				result = result:sub(1, second + 2 + InfiniteMath.DECIMALPOINTS)
-				if result:split(".")[2] == "00" then
+				if tonumber(result:split(".")[2]) == 0 then
 					result = result:split(".")[1]
 				end
 			else
