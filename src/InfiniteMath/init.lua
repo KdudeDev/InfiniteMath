@@ -110,7 +110,11 @@ local function convert(number)
 	local second = #numberStr - 1 - removed
 
 	if string.match(numberStr, "e") then
-		second = numberStr:split("+")[2]
+		if string.match(numberStr, "+") then
+			second = numberStr:split("+")[2]
+		elseif string.match(numberStr, "-") then
+			second = numberStr:split("e")[2]
+		end
 		first = numberStr:split("e")[1]
 	elseif string.match(numberStr, "inf") then
 		second = "inf"
@@ -356,7 +360,7 @@ end
 
 function InfiniteMath.new(val)	
 	local first, second
-
+	
 	if typeof(val) == "table" then
 		if val.first ~= nil and val.second ~= nil then return val end
 		if typeof(val[1]) ~= "number" or typeof(val[2]) ~= "number" then
@@ -366,7 +370,11 @@ function InfiniteMath.new(val)
 		first = val[1]
 		second = val[2]
 	elseif typeof(val) == "string" then
-		first, second = fixNumber(table.unpack(val:split(',')))
+		if tonumber(val) == nil then
+			first, second = fixNumber(table.unpack(val:split(',')))
+		else
+			first, second = convert(tonumber(val))
+		end
 	elseif typeof(val) == 'number' then
 		if val == 1e+999 then
 			error('INF number is not allowed. Please use "string" or "table" instead of "number" to go above INF.')
@@ -431,10 +439,17 @@ function Number:GetSuffix(abbreviation)
 	if second < 3 then 
 		local result = tostring(self:Reverse())
 
-		if InfiniteMath.DECIMALPOINTS > 0 then
-			result = result:sub(1, second + 2 + InfiniteMath.DECIMALPOINTS)
+		if first >= 1 then
+			if InfiniteMath.DECIMALPOINTS > 0 then
+				result = result:sub(1, second + 2 + InfiniteMath.DECIMALPOINTS)
+				if result:split(".")[2] == "00" then
+					result = result:split(".")[1]
+				end
+			else
+				result = result:split(".")[1]
+			end
 		else
-			result = result:split(".")[1]
+			result = first
 		end
 
 		return result
