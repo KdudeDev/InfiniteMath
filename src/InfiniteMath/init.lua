@@ -3,7 +3,7 @@
 --[=[
 	@class InfiniteMath
 
-	InfiniteMath is module that allows you to surpass the limit of -10^308 to 10^308, with a new limit of -10^^308 to 10^^308 (1 with 10^308 zeros)
+	InfiniteMath is module that allows you to surpass the limit of -10^308 to 10^308, with a new limit of -10^^308 to 10^^308 (1 with 10^308 zeros).
 
 	InfiniteMath has many of the functions from the math library, as well as metamethods for arithmatic and comparison.
 	
