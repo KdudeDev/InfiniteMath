@@ -30,6 +30,11 @@ local InfiniteMath = {
 local Number = {}
 Number.__index = Number
 
+export type Number = typeof(setmetatable({
+	first = first,
+	second = second
+}))
+
 --[[ Private variables ]]--
 
 local THRESHOLD = 16
@@ -227,7 +232,7 @@ function Number.__pow(a, power)
 	end
 
 	if power == math.huge or power ~= power or typeof(power) ~= "number" then
-		error(power.." is not a valid power.")
+		error("'"..power.."' is not a valid power. If power is 'inf' you must keep it below 10^308")
 	end
 
 	local sign = InfiniteMath.sign(a)
@@ -331,7 +336,7 @@ function Number.__tostring(self)
 end
 
 function Number.__concat(self, value)
-	return tostring(self)..value
+	return tostring(self)..tostring(value)
 end
 
 --[[ Class methods ]]--
@@ -358,7 +363,7 @@ end
 	@return Number
 ]=]
 
-function InfiniteMath.new(val)	
+function InfiniteMath.new(val : number | string) : Number
 	local first, second
 	
 	if typeof(val) == "table" then
@@ -438,18 +443,30 @@ function Number:GetSuffix(abbreviation)
 
 	if second < 3 then 
 		local result = tostring(self:Reverse())
+		local Length = 2
+		if math.sign(first) == -1 then Length = 3 end
 
-		if first >= 1 then
+		if math.abs(first) >= 1 then
 			if InfiniteMath.DECIMALPOINTS > 0 then
-				result = result:sub(1, second + 2 + InfiniteMath.DECIMALPOINTS)
-				if tonumber(result:split(".")[2]) == 0 then
+				result = result:sub(1, second + Length + InfiniteMath.DECIMALPOINTS)
+				local decimal = result:split(".")[2]
+				if decimal == nil then return result end
+				
+				if tonumber(decimal) == 0 then
 					result = result:split(".")[1]
+				elseif decimal == string.rep(9, InfiniteMath.DECIMALPOINTS) then
+					result = tonumber(result:split(".")[1]) + 1
 				end
 			else
 				result = result:split(".")[1]
 			end
 		else
-			result = first
+			result = result:sub(1, second + Length + InfiniteMath.DECIMALPOINTS)
+			local decimal = result:split(".")[2]
+			
+			if decimal == string.rep(9, InfiniteMath.DECIMALPOINTS) then
+				result = tonumber(result:split(".")[1]) + 1
+			end
 		end
 
 		return result
