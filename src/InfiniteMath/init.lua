@@ -461,6 +461,7 @@ function Number:GetSuffix(abbreviation)
 				result = result:split(".")[1]
 			end
 		else
+			if math.abs(first) <= .01 then return "0" end
 			result = result:sub(1, second + Length + InfiniteMath.DECIMALPOINTS)
 			local decimal = result:split(".")[2]
 			
