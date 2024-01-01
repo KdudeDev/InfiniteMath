@@ -8,3 +8,4 @@ sidebar_position: 1
 
 - [**Installation**](/docs/Installation)
 - [**API Documentation**](/api/InfiniteMath)
+- [**Datastore Implementation**](/api/Datastore)
