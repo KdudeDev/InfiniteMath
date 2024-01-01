@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Datastore Implementation
 
-InfiniteMath uses metatables, meaning numbers created using it can't be saved in a datastore. 
+InfiniteMath uses metatables, meaning numbers created using it can't be saved in a datastore. If you do save an InfiniteMath number in a datastore, it will lose its metamethods which means no operations, comparisons, etc.
 
 The best way to store InfiniteMath numbers is as an array constructed using `Num.first` and `Num.second`
 ```lua
