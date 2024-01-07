@@ -3,7 +3,7 @@
 --[=[
 	@class InfiniteMath
 
-	InfiniteMath is module that allows you to surpass the limit of -10^308 to 10^308, with a new limit of -10^^308 to 10^^308 (1 with 10^308 zeros).
+	InfiniteMath is module that allows you to surpass the limit of -10^308 to 10^308, with a new limit of -10^^308 to 10^^308 (1 with 10^308 zeros)
 
 	InfiniteMath has many of the functions from the math library, as well as metamethods for arithmatic and comparison.
 	
@@ -31,9 +31,9 @@ local Number = {}
 Number.__index = Number
 
 export type Number = typeof(setmetatable({
-	first = first,
-	second = second
-}))
+	first = "number",
+	second = "number"
+}, Number))
 
 --[[ Private variables ]]--
 
@@ -363,7 +363,7 @@ end
 	@return Number
 ]=]
 
-function InfiniteMath.new(val : number | string) : Number
+function InfiniteMath.new(val : number | string | {} | Number) : Number
 	local first, second
 	
 	if typeof(val) == "table" then
@@ -699,23 +699,23 @@ end
 
 function InfiniteMath.round(Num)
 	Num = checkNumber(Num)
-	local sign = InfiniteMath.sign(Num)
-	Num *= sign
 
 	local first, second = fixNumber(Num.first, Num.second)
-	if second >= 300 then return Num * sign end -- Rounding after 1e+300 would be pointless, so don't do it.
+	if second >= 300 then return Num end -- Rounding after 1e+300 would be pointless, so don't do it.
+	
+	local decimal = tostring(first):sub(3 + second)
 
-	local firstSplit = math.abs(first) % 1
+	if decimal ~= "" then
+		local firstSplit = tonumber(decimal) / 10^#decimal
 
-	if firstSplit ~= 0 then
 		if firstSplit >= .5 then
-			return InfiniteMath.new(math.ceil(Num:Reverse())) * sign
+			return InfiniteMath.new(math.ceil(Num:Reverse()))
 		else
-			return InfiniteMath.new(math.floor(Num:Reverse())) * sign
+			return InfiniteMath.new(math.floor(Num:Reverse()))
 		end
 	end
 
-	return Num * sign
+	return Num
 end
 
 --[=[
@@ -781,7 +781,7 @@ function InfiniteMath.clamp(Num, Min, Max)
 		local firstMax, secondMax = fixNumber(Max.first, Max.second)
 		Max = InfiniteMath.new({firstMax, secondMax})
 	else
-		Max = InfiniteMath.new("1, 1e+308")
+		Max = InfiniteMath.new({1, 1e+308})
 	end
 
 	Num = if Num < Min then Min elseif Num > Max then Max else Num
