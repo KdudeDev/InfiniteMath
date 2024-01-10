@@ -420,7 +420,6 @@ end
 	@method SetValue
 	@param newFirst number
 	@param newSecond number
-	@return number
 ]=]
 
 function Number:SetValue(newFirst, newSecond)
