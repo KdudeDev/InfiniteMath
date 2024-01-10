@@ -629,29 +629,25 @@ function Number:aaNotation()
 	local first, second = fixNumber(self.first, self.second)
 
 	local secondRemainder = second % 3
-	first *= 10^secondRemainder
+	first = first * 10^secondRemainder
+	local suffixIndex = math.floor(second / 3)
 
-	local suffixIndex = math.floor(second/3)
-
-	if suffixIndex < 5 then
-		return self:GetSuffix()
+	if suffixIndex == 0 then
+		return tostring(first)
 	end
 
-	local n = suffixIndex
-
-	local unitInt = n - 4
-	local secondUnit = unitInt % 26
-	local firstUnit = math.ceil(unitInt / 26)
-
-	if firstUnit > 26 then
-		return self:ScientificNotation()
+	local suffix = ""
+	while suffixIndex > 0 do
+		local remainder = suffixIndex % #Alphabet
+		remainder = if remainder == 0 then #Alphabet else remainder
+		suffix = Alphabet[remainder] .. suffix
+		suffixIndex = math.floor((suffixIndex - remainder) / #Alphabet)
 	end
-
-	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
-	local unit = Alphabet[firstUnit]..(Alphabet[secondUnit] or Alphabet[26])
-
-	return str..unit
+	
+	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS) / 10^InfiniteMath.DECIMALPOINTS
+	return str .. suffix
 end
+
 
 --[=[
 	@within Number
