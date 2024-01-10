@@ -305,7 +305,10 @@ function Number.__lt(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 	local first1, second1 = fixNumber(a.first, a.second)
 	local first2, second2 = fixNumber(b.first, b.second)
-
+	
+	second1 *= math.sign(first1)
+	second2 *= math.sign(second2)
+	
 	if second1 == second2 then
 		return first1 < first2
 	end
@@ -317,6 +320,9 @@ function Number.__le(a, b)
 	a, b = checkNumber(a), checkNumber(b)
 	local first1, second1 = fixNumber(a.first, a.second)
 	local first2, second2 = fixNumber(b.first, b.second)
+	
+	second1 *= math.sign(first1)
+	second2 *= math.sign(second2)
 
 	if second1 == second2 then
 		return first1 <= first2
@@ -395,6 +401,37 @@ function InfiniteMath.new(val : number | string | {} | Number) : Number
 		first = first,
 		second = second
 	}, Number)
+end
+
+--[=[
+	@within Number
+
+	Sets the value of the constructed number without creating a new Number metatable. If you want to set the value of a constructed number it is better to use this than setting it to a new `.new()`.
+
+	`SetValue` takes a new `first` and `second` to set the value to, if you want to set the value to `100` you must pass `1, 3`.
+
+	```lua
+		local Number = InfiniteMath.new(1000)
+		print(Number) -- 1000
+		Number:SetValue(5, 4)
+		print(Number) -- 5000
+	```
+
+	@method SetValue
+	@param newFirst number
+	@param newSecond number
+	@return number
+]=]
+
+function Number:SetValue(newFirst, newSecond)
+	if type(newFirst) ~= "number" and type(newSecond) ~= "number" then
+		error('Both parameters of SetValue must be "number"')
+	end
+	
+	newFirst, newSecond = fixNumber(newFirst, newSecond)
+	
+	self.first = newFirst
+	self.second = newSecond
 end
 
 --[=[
@@ -607,12 +644,12 @@ function Number:aaNotation()
 	local secondUnit = unitInt % 26
 	local firstUnit = math.ceil(unitInt / 26)
 
-	if firstUnit > 26 or secondUnit == 0 then
+	if firstUnit > 26 then
 		return self:ScientificNotation()
 	end
 
 	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
-	local unit = Alphabet[firstUnit]..Alphabet[secondUnit]
+	local unit = Alphabet[firstUnit]..(Alphabet[secondUnit] or Alphabet[26])
 
 	return str..unit
 end
@@ -655,6 +692,11 @@ end
 ]=]
 
 function InfiniteMath:ConvertFromLeaderboards(GivenNumber)
+	--return 0
+	if GivenNumber == 0 then
+		return InfiniteMath.new(0)
+	end
+	
 	GivenNumber /= LEADERBOARDPRECISION
 
 	local numbers = tostring(GivenNumber):split('.')
@@ -848,6 +890,7 @@ function InfiniteMath.max(...)
 
 	return Max
 end
+
 
 --[=[
 	@within InfiniteMath
