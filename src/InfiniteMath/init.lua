@@ -23,8 +23,16 @@
 	How many decimal points are displayed. 1 = 1.0, 2 = 1.00, 3 = 1.000, etc.
 ]=]
 
+--[=[
+	@prop SUFFIXLENGTHMAX number
+	@within InfiniteMath
+
+	The maximum length for suffixes generated for aaNotation conversions. Exceeding this length results in a scientific number instead.
+]=]
+
 local InfiniteMath = {
 	DECIMALPOINTS = 2,
+	SUFFIXLENGTHMAX = 3,
 }
 
 local Number = {}
@@ -629,7 +637,7 @@ function Number:aaNotation()
 	local first, second = fixNumber(self.first, self.second)
 
 	local secondRemainder = second % 3
-	first = first * 10^secondRemainder
+	first *= 10^secondRemainder
 	local suffixIndex = math.floor(second / 3)
 
 	if suffixIndex == 0 then
@@ -644,10 +652,13 @@ function Number:aaNotation()
 		suffixIndex = math.floor((suffixIndex - remainder) / #Alphabet)
 	end
 	
+	if #suffix > InfiniteMath.SUFFIXLENGTHMAX then
+		return self:ScientificNotation()
+	end
+
 	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS) / 10^InfiniteMath.DECIMALPOINTS
 	return str .. suffix
 end
-
 
 --[=[
 	@within Number
