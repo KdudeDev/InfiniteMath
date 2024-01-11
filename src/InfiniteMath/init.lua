@@ -23,8 +23,16 @@
 	How many decimal points are displayed. 1 = 1.0, 2 = 1.00, 3 = 1.000, etc.
 ]=]
 
+--[=[
+	@prop SUFFIXLENGTHMAX number
+	@within InfiniteMath
+
+	The maximum length for suffixes generated for aaNotation conversions. Exceeding this length results in a scientific number instead.
+]=]
+
 local InfiniteMath = {
 	DECIMALPOINTS = 2,
+	SUFFIXLENGTHMAX = 3,
 }
 
 local Number = {}
@@ -630,27 +638,26 @@ function Number:aaNotation()
 
 	local secondRemainder = second % 3
 	first *= 10^secondRemainder
+	local suffixIndex = math.floor(second / 3)
 
-	local suffixIndex = math.floor(second/3)
-
-	if suffixIndex < 5 then
-		return self:GetSuffix()
+	if suffixIndex == 0 then
+		return tostring(first)
 	end
 
-	local n = suffixIndex
-
-	local unitInt = n - 4
-	local secondUnit = unitInt % 26
-	local firstUnit = math.ceil(unitInt / 26)
-
-	if firstUnit > 26 then
+	local suffix = ""
+	while suffixIndex > 0 do
+		local remainder = suffixIndex % #Alphabet
+		remainder = if remainder == 0 then #Alphabet else remainder
+		suffix = Alphabet[remainder] .. suffix
+		suffixIndex = math.floor((suffixIndex - remainder) / #Alphabet)
+	end
+	
+	if #suffix > InfiniteMath.SUFFIXLENGTHMAX then
 		return self:ScientificNotation()
 	end
 
-	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS)/10^InfiniteMath.DECIMALPOINTS -- The * 10 / 10 controls decimal precision, more zeros = more decimals
-	local unit = Alphabet[firstUnit]..(Alphabet[secondUnit] or Alphabet[26])
-
-	return str..unit
+	local str = math.floor(first * 10^InfiniteMath.DECIMALPOINTS) / 10^InfiniteMath.DECIMALPOINTS
+	return str .. suffix
 end
 
 --[=[
