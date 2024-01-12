@@ -629,7 +629,7 @@ local Alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m
 	Returns a string with the number formatted in double letter notation. Use the AALENGTHMAX property to adjust the max letters possible. 
 	
 	```lua
-		print(InfiniteMath.new(1e+15):aaNotation()) -- 1e
+		print(InfiniteMath.new(1e+15):aaNotation()) -- 1a
 	```
 
 	@method aaNotation
@@ -641,10 +641,10 @@ function Number:aaNotation()
 
 	local secondRemainder = second % 3
 	first *= 10^secondRemainder
-	local suffixIndex = math.floor(second / 3)
+	local suffixIndex = math.floor(second / 3) - 4
 
-	if suffixIndex == 0 then
-		return tostring(first)
+	if suffixIndex <= 0 then
+		return self:GetSuffix()
 	end
 
 	local suffix = ""
