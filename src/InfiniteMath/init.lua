@@ -24,7 +24,7 @@
 ]=]
 
 --[=[
-	@prop SUFFIXLENGTHMAX number
+	@prop AALENGTHMAX number
 	@within InfiniteMath
 
 	The maximum length for suffixes generated for aaNotation conversions. Exceeding this length results in a scientific number instead.
@@ -32,7 +32,7 @@
 
 local InfiniteMath = {
 	DECIMALPOINTS = 2,
-	SUFFIXLENGTHMAX = 3,
+	AALENGTHMAX = 3,
 }
 
 local Number = {}
@@ -381,9 +381,12 @@ function InfiniteMath.new(val : number | string | {} | Number) : Number
 	local first, second
 	
 	if typeof(val) == "table" then
-		if val.first ~= nil and val.second ~= nil then return val end
-		if typeof(val[1]) ~= "number" or typeof(val[2]) ~= "number" then
-			error("Both arguments of table must be numbers.")
+		if val.first ~= nil and val.second ~= nil then 
+			if getmetatable(val) ~= Number then
+				return setmetatable(val, Number)
+			end
+			
+			return val 
 		end
 
 		first = val[1]
@@ -623,10 +626,10 @@ local Alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m
 --[=[
 	@within Number
 
-	Returns a string with the number formatted in double letter notation.
+	Returns a string with the number formatted in double letter notation. Use the AALENGTHMAX property to adjust the max letters possible. 
 	
 	```lua
-		print(InfiniteMath.new(1e+15):aaNotation()) -- 1aa
+		print(InfiniteMath.new(1e+15):aaNotation()) -- 1e
 	```
 
 	@method aaNotation
@@ -652,7 +655,7 @@ function Number:aaNotation()
 		suffixIndex = math.floor((suffixIndex - remainder) / #Alphabet)
 	end
 	
-	if #suffix > InfiniteMath.SUFFIXLENGTHMAX then
+	if #suffix > InfiniteMath.AALENGTHMAX then
 		return self:ScientificNotation()
 	end
 
